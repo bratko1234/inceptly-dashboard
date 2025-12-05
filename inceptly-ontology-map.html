@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inceptly | Ontology Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --bg-card: #16161f;
+            --border: #2a2a3a;
+            --border-light: #3a3a4a;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b0;
+            --text-muted: #707080;
+            --accent-blue: #4a9eff;
+            --accent-purple: #9b7aff;
+            --accent-amber: #f5a623;
+            --accent-red: #ff6b6b;
+            --accent-green: #4ade80;
+            --accent-cyan: #22d3ee;
+            
+            /* Semantic Layer */
+            --semantic: #9b7aff;
+            --semantic-bg: rgba(155, 122, 255, 0.08);
+            
+            /* Kinetic Layer */
+            --kinetic: #4a9eff;
+            --kinetic-bg: rgba(74, 158, 255, 0.08);
+            
+            /* Dynamic Layer */
+            --dynamic: #4ade80;
+            --dynamic-bg: rgba(74, 222, 128, 0.08);
+            
+            /* Confidence levels */
+            --conf-high: #4ade80;
+            --conf-medium: #f5a623;
+            --conf-low: #ff6b6b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 32px;
+        }
+        
+        header {
+            margin-bottom: 48px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 32px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        
+        .title-block h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .title-block h1 span {
+            color: var(--semantic);
+        }
+        
+        .title-block .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+        
+        .meta-block {
+            text-align: right;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .philosophy-note {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-purple);
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .philosophy-note em {
+            color: var(--text-primary);
+            font-style: normal;
+        }
+        
+        /* Three Layer Architecture */
+        .architecture-flow {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 48px;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .arch-layer {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .arch-layer.semantic {
+            background: var(--semantic-bg);
+            border: 1px solid var(--semantic);
+        }
+        
+        .arch-layer.kinetic {
+            background: var(--kinetic-bg);
+            border: 1px solid var(--kinetic);
+        }
+        
+        .arch-layer.dynamic {
+            background: var(--dynamic-bg);
+            border: 1px solid var(--dynamic);
+        }
+        
+        .arch-layer h3 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .arch-layer.semantic h3 { color: var(--semantic); }
+        .arch-layer.kinetic h3 { color: var(--kinetic); }
+        .arch-layer.dynamic h3 { color: var(--dynamic); }
+        
+        .arch-layer p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .arch-layer .question {
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .arch-arrow {
+            color: var(--text-muted);
+            font-size: 24px;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            margin-top: 48px;
+        }
+        
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .section-header .layer-tag {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+        
+        .layer-tag.semantic {
+            background: var(--semantic-bg);
+            color: var(--semantic);
+            border: 1px solid var(--semantic);
+        }
+        
+        .layer-tag.kinetic {
+            background: var(--kinetic-bg);
+            color: var(--kinetic);
+            border: 1px solid var(--kinetic);
+        }
+        
+        .layer-tag.dynamic {
+            background: var(--dynamic-bg);
+            color: var(--dynamic);
+            border: 1px solid var(--dynamic);
+        }
+        
+        /* Entity Registry */
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 20px;
+        }
+        
+        .entity-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+        
+        .entity-card:hover {
+            border-color: var(--border-light);
+        }
+        
+        .entity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .entity-name {
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .confidence-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+        
+        .confidence-badge.high {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--conf-high);
+        }
+        
+        .confidence-badge.medium {
+            background: rgba(245, 166, 35, 0.15);
+            color: var(--conf-medium);
+        }
+        
+        .confidence-badge.low {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--conf-low);
+        }
+        
+        .entity-definition {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .entity-section {
+            margin-bottom: 12px;
+        }
+        
+        .entity-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        
+        .entity-section-content {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .assumption-warning {
+            background: rgba(255, 107, 107, 0.08);
+            border-left: 2px solid var(--accent-red);
+            padding: 8px 12px;
+            font-size: 11px;
+            color: var(--accent-red);
+            margin-top: 12px;
+        }
+        
+        .usage-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .usage-tag {
+            font-size: 10px;
+            padding: 3px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        /* Relationship Map */
+        .relationship-map {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .relationship-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .relationship-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .rel-entity {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            min-width: 140px;
+            text-align: center;
+        }
+        
+        .rel-arrow {
+            color: var(--accent-cyan);
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .rel-arrow .label {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        /* Data Lineage */
+        .lineage-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            overflow-x: auto;
+        }
+        
+        .lineage-tree {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            line-height: 2;
+        }
+        
+        .lineage-node {
+            padding-left: 24px;
+            border-left: 1px solid var(--border);
+            margin-left: 12px;
+        }
+        
+        .lineage-root {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+        
+        .lineage-branch {
+            color: var(--text-secondary);
+        }
+        
+        .lineage-source {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+        
+        .lineage-warning {
+            color: var(--accent-amber);
+        }
+        
+        .lineage-ok {
+            color: var(--accent-green);
+        }
+        
+        .lineage-broken {
+            color: var(--accent-red);
+        }
+        
+        /* Join Confidence Matrix */
+        .matrix-container {
+            overflow-x: auto;
+        }
+        
+        .confidence-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .confidence-matrix th {
+            background: var(--bg-tertiary);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .confidence-matrix td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .confidence-matrix tr:hover td {
+            background: var(--bg-secondary);
+        }
+        
+        .matrix-conf {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .matrix-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .matrix-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+        
+        .matrix-bar-fill.high { background: var(--conf-high); }
+        .matrix-bar-fill.medium { background: var(--conf-medium); }
+        .matrix-bar-fill.low { background: var(--conf-low); }
+        
+        .matrix-issue {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* Assumption Registry */
+        .assumption-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .assumption-entry {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        
+        .assumption-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .assumption-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        
+        .assumption-status {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-left: 16px;
+        }
+        
+        .assumption-status.holding {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--conf-high);
+        }
+        
+        .assumption-status.stressed {
+            background: rgba(245, 166, 35, 0.15);
+            color: var(--conf-medium);
+        }
+        
+        .assumption-status.breaking {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--conf-low);
+        }
+        
+        .assumption-status.untested {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+        }
+        
+        .assumption-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 24px;
+        }
+        
+        .assumption-impact {
+            color: var(--accent-amber);
+        }
+        
+        /* Strategic Bets */
+        .bet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        
+        .bet-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .bet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .bet-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .bet-type {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+        
+        .bet-type.convex {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--accent-green);
+        }
+        
+        .bet-type.linear {
+            background: rgba(74, 158, 255, 0.15);
+            color: var(--accent-blue);
+        }
+        
+        .bet-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .bet-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .bet-metric {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .bet-metric-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .bet-metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .bet-metric-value.green { color: var(--accent-green); }
+        .bet-metric-value.amber { color: var(--accent-amber); }
+        .bet-metric-value.red { color: var(--accent-red); }
+        
+        /* Footer */
+        .footer {
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        
+        .footer em {
+            display: block;
+            margin-top: 12px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="title-block">
+                    <h1>Inceptly <span>Ontology Map</span></h1>
+                    <div class="subtitle">
+                        The semantic foundation for all measurement. Entity definitions, data lineage, join confidence, and assumption tracking. Without this, every metric is ambiguous.
+                    </div>
+                </div>
+                <div class="meta-block">
+                    <div>Last Updated: Dec 2024</div>
+                    <div>Review Cadence: Monthly</div>
+                    <div>Owner: Strategy Lead</div>
+                </div>
+            </div>
+            
+            <div class="philosophy-note">
+                <strong>Bratrax Principle:</strong> <em>"Ontology gives Bratrax the structure; Bratrax gives ontology meaning."</em> 
+                This map defines what our words mean. Every definition contains hidden assumptions. The Semantic Layer makes those assumptions explicit and testable. 
+                If these definitions are wrong, every dashboard built on them is wrong.
+            </div>
+        </header>
+        
+        <!-- Three Layer Architecture -->
+        <div class="architecture-flow">
+            <div class="arch-layer semantic">
+                <h3>Semantic Layer</h3>
+                <p>Entity definitions, shared language</p>
+                <div class="question">"What do we mean by Client?"</div>
+            </div>
+            
+            <div class="arch-arrow">→</div>
+            
+            <div class="arch-layer kinetic">
+                <h3>Kinetic Layer</h3>
+                <p>Data flows, mappings, joins</p>
+                <div class="question">"Does CRM client = Billing client?"</div>
+            </div>
+            
+            <div class="arch-arrow">→</div>
+            
+            <div class="arch-layer dynamic">
+                <h3>Dynamic Layer</h3>
+                <p>Rules, triggers, decisions</p>
+                <div class="question">"When do we flag at-risk?"</div>
+            </div>
+        </div>
+        
+        <!-- Entity Registry -->
+        <div class="section-header">
+            <h2>Entity Registry</h2>
+            <span class="layer-tag semantic">Semantic Layer</span>
+        </div>
+        
+        <div class="entity-grid">
+            <!-- Prospect -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">PROSPECT</span>
+                    <span class="confidence-badge medium">75% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A company that has entered our funnel through any channel (content, referral, outreach) and shows intent to evaluate services. Not yet an audit request.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • "Company" = single decision unit (ignores holding companies with multiple brands)<br>
+                        • "Intent" = tracked behavior (ignores offline signals)<br>
+                        • Quality not captured in definition — all prospects counted equally
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">Qualified Prospect Pipeline</span>
+                        <span class="usage-tag">Demand Gen Metrics</span>
+                        <span class="usage-tag">Content Attribution</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Qualified Prospect -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">QUALIFIED_PROSPECT</span>
+                    <span class="confidence-badge medium">70% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A prospect who has requested an audit. Must meet criteria: D2C/Supplements/Info Products vertical, sufficient budget potential, decision-maker engaged.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • "Sufficient budget" is subjective — no hard threshold<br>
+                        • "Decision-maker engaged" requires human judgment<br>
+                        • Vertical fit sometimes ambiguous (hybrid businesses)
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">Input Metric #1</span>
+                        <span class="usage-tag">Audit-to-Conversion Rate</span>
+                        <span class="usage-tag">North Star Metric</span>
+                    </div>
+                </div>
+                <div class="assumption-warning">
+                    ⚠️ Qualification criteria inconsistently applied across team members
+                </div>
+            </div>
+            
+            <!-- Client -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">CLIENT</span>
+                    <span class="confidence-badge high">90% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A company with an active service agreement and launched campaigns. Status: Active, Paused, or Churned. Each client has one primary pricing model.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • "Active" = campaigns running OR in onboarding<br>
+                        • "Paused" vs "Churned" — 60-day threshold (arbitrary)<br>
+                        • Multi-brand clients counted as single entity
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">All Revenue Metrics</span>
+                        <span class="usage-tag">Retention Metrics</span>
+                        <span class="usage-tag">Expansion Rate</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ROI Positive Client -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">ROI_POSITIVE_CLIENT</span>
+                    <span class="confidence-badge low">55% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A client whose YouTube campaigns have achieved ROI > 1.0 (revenue generated > ad spend). Measured at campaign level, aggregated to client level.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • "Revenue" = attributed revenue (attribution model matters)<br>
+                        • ROI window not defined (7-day? 30-day? LTV?)<br>
+                        • Does not account for agency fees in calculation<br>
+                        • Backend revenue often not captured in ROI calc
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">North Star Metric</span>
+                        <span class="usage-tag">Time-to-First-ROI</span>
+                        <span class="usage-tag">Expansion Rate</span>
+                    </div>
+                </div>
+                <div class="assumption-warning">
+                    ⚠️ CRITICAL: ROI definition varies by client's tracking setup. Not consistently measurable.
+                </div>
+            </div>
+            
+            <!-- Creative Concept -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">CREATIVE_CONCEPT</span>
+                    <span class="confidence-badge medium">65% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A distinct creative approach tested in campaigns. Includes: hook type, angle, format, messaging framework. Tracked separately from ad variations.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • "Concept" vs "Variation" boundary is subjective<br>
+                        • Tagging requires consistent taxonomy<br>
+                        • Cross-client concepts not always comparable<br>
+                        • "Above-average performance" definition varies by client
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">Creative Pipeline Health</span>
+                        <span class="usage-tag">Creative Retainer Value</span>
+                        <span class="usage-tag">Pattern Library</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Campaign -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">CAMPAIGN</span>
+                    <span class="confidence-badge high">85% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A YouTube/Google Ads campaign under management. Has: client, budget, creatives, targeting, performance metrics. Status: Active, Paused, Ended.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • One campaign = one objective (not always true)<br>
+                        • Platform campaign structure may differ from logical structure<br>
+                        • Performance aggregation level varies
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">ROAS Metrics</span>
+                        <span class="usage-tag">Spend Tracking</span>
+                        <span class="usage-tag">Time-to-First-ROI</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pricing Model -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">PRICING_MODEL</span>
+                    <span class="confidence-badge high">95% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    The billing structure for a client relationship. Types: Ad Spend % (traditional), Creative Retainer (new), Hybrid, Fixed + Variable, Performance-Based.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • Clean categorization possible (some clients have complex deals)<br>
+                        • "Innovative" vs "Traditional" is binary classification<br>
+                        • Doesn't capture negotiated exceptions
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">Pricing Model Innovation</span>
+                        <span class="usage-tag">Churn by Model Type</span>
+                        <span class="usage-tag">Strategic Repositioning</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expansion Event -->
+            <div class="entity-card">
+                <div class="entity-header">
+                    <span class="entity-name">EXPANSION_EVENT</span>
+                    <span class="confidence-badge medium">70% Confidence</span>
+                </div>
+                <div class="entity-definition">
+                    A discrete event where client expands relationship: budget increase 20%+, new service added, contract extended, or referral made.
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Hidden Assumptions</div>
+                    <div class="entity-section-content">
+                        • "20% budget increase" threshold is arbitrary<br>
+                        • "New service" requires clear service boundaries<br>
+                        • Referral = qualified lead from client (verification needed)<br>
+                        • Within 90 days of ROI achievement (timing exact?)
+                    </div>
+                </div>
+                <div class="entity-section">
+                    <div class="entity-section-label">Used By</div>
+                    <div class="usage-list">
+                        <span class="usage-tag">North Star Metric</span>
+                        <span class="usage-tag">Expansion Rate</span>
+                        <span class="usage-tag">Client LTV</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Entity Relationships -->
+        <div class="section-header">
+            <h2>Entity Relationships</h2>
+            <span class="layer-tag kinetic">Kinetic Layer</span>
+        </div>
+        
+        <div class="relationship-map">
+            <div class="relationship-diagram">
+                <div class="relationship-row">
+                    <div class="rel-entity">PROSPECT</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">requests_audit</span>
+                    </div>
+                    <div class="rel-entity">QUALIFIED_PROSPECT</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">converts_to (30d)</span>
+                    </div>
+                    <div class="rel-entity">CLIENT</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">achieves_roi</span>
+                    </div>
+                    <div class="rel-entity">ROI_POSITIVE_CLIENT</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">expands (90d)</span>
+                    </div>
+                    <div class="rel-entity">EXPANSION_EVENT</div>
+                </div>
+                
+                <div class="relationship-row" style="margin-left: 320px;">
+                    <div class="rel-entity">CLIENT</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">has_many</span>
+                    </div>
+                    <div class="rel-entity">CAMPAIGN</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">contains</span>
+                    </div>
+                    <div class="rel-entity">CREATIVE_CONCEPT</div>
+                </div>
+                
+                <div class="relationship-row" style="margin-left: 320px;">
+                    <div class="rel-entity">CLIENT</div>
+                    <div class="rel-arrow">
+                        →
+                        <span class="label">billed_by</span>
+                    </div>
+                    <div class="rel-entity">PRICING_MODEL</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Lineage for North Star -->
+        <div class="section-header">
+            <h2>Data Lineage: North Star Metric</h2>
+            <span class="layer-tag kinetic">Kinetic Layer</span>
+        </div>
+        
+        <div class="lineage-container">
+            <div class="lineage-tree">
+                <div class="lineage-root">NORTH STAR: Self-Sustaining Growth Engine</div>
+                <div class="lineage-node">
+                    <span class="lineage-branch">├── Qualified Prospects entering funnel</span>
+                    <span class="lineage-source"> ← CRM (HubSpot?) + Manual tagging</span>
+                    <span class="lineage-warning"> ⚠️ Qualification inconsistent</span>
+                    
+                    <div class="lineage-node">
+                        <span class="lineage-branch">├── who convert to active clients (within 30d)</span>
+                        <span class="lineage-source"> ← CRM opportunity → Contract signed</span>
+                        <span class="lineage-ok"> ✓ Clean join on client_id</span>
+                    </div>
+                    
+                    <div class="lineage-node">
+                        <span class="lineage-branch">├── who achieve ROI > 1.0</span>
+                        <span class="lineage-source"> ← Google Ads API + Client revenue data</span>
+                        <span class="lineage-broken"> ✗ Revenue attribution varies by client</span>
+                        
+                        <div class="lineage-node">
+                            <span class="lineage-branch">├── Revenue (numerator)</span>
+                            <span class="lineage-source"> ← Client-provided OR platform-reported</span>
+                            <span class="lineage-broken"> ✗ 40% of clients have unreliable attribution</span>
+                        </div>
+                        
+                        <div class="lineage-node">
+                            <span class="lineage-branch">└── Ad Spend (denominator)</span>
+                            <span class="lineage-source"> ← Google Ads API</span>
+                            <span class="lineage-ok"> ✓ Reliable</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lineage-node">
+                        <span class="lineage-branch">└── who expand within 120d</span>
+                        <span class="lineage-source"> ← CRM expansion events + Manual logging</span>
+                        <span class="lineage-warning"> ⚠️ Budget increases auto-detected; referrals manual</span>
+                        
+                        <div class="lineage-node">
+                            <span class="lineage-branch">├── Budget increase 20%+</span>
+                            <span class="lineage-source"> ← Google Ads budget history</span>
+                            <span class="lineage-ok"> ✓ Automatable</span>
+                        </div>
+                        
+                        <div class="lineage-node">
+                            <span class="lineage-branch">├── New services added</span>
+                            <span class="lineage-source"> ← Contract amendments / Billing</span>
+                            <span class="lineage-warning"> ⚠️ Requires manual tagging</span>
+                        </div>
+                        
+                        <div class="lineage-node">
+                            <span class="lineage-branch">├── Contract extended</span>
+                            <span class="lineage-source"> ← CRM / Contract system</span>
+                            <span class="lineage-ok"> ✓ Trackable</span>
+                        </div>
+                        
+                        <div class="lineage-node">
+                            <span class="lineage-branch">└── Referral made</span>
+                            <span class="lineage-source"> ← Manual entry only</span>
+                            <span class="lineage-broken"> ✗ Often missed / not attributed</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: 8px;">
+                    <strong style="color: var(--accent-amber);">Overall North Star Confidence: 55%</strong><br>
+                    <span style="font-size: 12px; color: var(--text-muted);">
+                        ROI measurement is the weakest link. Without standardized client revenue data, this metric cannot be reliably calculated.
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Join Confidence Matrix -->
+        <div class="section-header">
+            <h2>Join Confidence Matrix</h2>
+            <span class="layer-tag kinetic">Kinetic Layer</span>
+        </div>
+        
+        <div class="matrix-container">
+            <table class="confidence-matrix">
+                <thead>
+                    <tr>
+                        <th>Join</th>
+                        <th>Confidence</th>
+                        <th>Key Issue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CRM Prospect ↔ Audit Request</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill high" style="width: 85%;"></div></div>
+                                <span>85%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">Some audit requests come outside CRM flow (direct email)</td>
+                    </tr>
+                    <tr>
+                        <td>Audit ↔ Client Contract</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill high" style="width: 92%;"></div></div>
+                                <span>92%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">Clean when contract references audit; rare edge cases</td>
+                    </tr>
+                    <tr>
+                        <td>Client ↔ Google Ads Account</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill high" style="width: 98%;"></div></div>
+                                <span>98%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">Near-perfect — managed in MCC</td>
+                    </tr>
+                    <tr>
+                        <td>Client ↔ Client Revenue Data</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill low" style="width: 40%;"></div></div>
+                                <span>40%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">CRITICAL: No standardized revenue feed from clients. Each setup is different.</td>
+                    </tr>
+                    <tr>
+                        <td>Campaign ↔ Creative Concept</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill medium" style="width: 60%;"></div></div>
+                                <span>60%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">Requires consistent creative tagging taxonomy. Currently manual.</td>
+                    </tr>
+                    <tr>
+                        <td>Client ↔ Pricing Model</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill high" style="width: 90%;"></div></div>
+                                <span>90%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">Billing system is source of truth. Edge cases: mid-month transitions.</td>
+                    </tr>
+                    <tr>
+                        <td>ROI Event ↔ Expansion Event</td>
+                        <td>
+                            <div class="matrix-conf">
+                                <div class="matrix-bar"><div class="matrix-bar-fill medium" style="width: 55%;"></div></div>
+                                <span>55%</span>
+                            </div>
+                        </td>
+                        <td class="matrix-issue">ROI date not always clearly recorded. 120-day window calculation fuzzy.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Assumption Registry -->
+        <div class="section-header">
+            <h2>Assumption Registry</h2>
+            <span class="layer-tag dynamic">Dynamic Layer</span>
+        </div>
+        
+        <div class="assumption-list">
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"We can reliably measure client ROI using platform-reported conversions"</span>
+                    <span class="assumption-status breaking">Breaking</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: ROI_POSITIVE_CLIENT, Time-to-First-ROI</span>
+                    <span class="assumption-impact">~40% of clients have unreliable attribution. iOS 14.5 broke this.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"Creative is our true differentiator, not media buying"</span>
+                    <span class="assumption-status untested">Untested</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: CREATIVE_CONCEPT, Strategic Repositioning</span>
+                    <span>Test: Offer creative retainer to 2-3 new clients. Measure willingness to pay.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"Clients leave primarily because agency fees become a burden at scale"</span>
+                    <span class="assumption-status stressed">Stressed</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: CLIENT (churn), PRICING_MODEL</span>
+                    <span class="assumption-impact">Some churn is performance-related, not fee-related. Need exit interview data.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"Audits are our best conversion mechanism"</span>
+                    <span class="assumption-status holding">Holding</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: QUALIFIED_PROSPECT, Audit-to-Conversion Rate</span>
+                    <span>Evidence: Audit-to-close rate consistently 30-40%. Above industry average.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"30-day conversion window is the right threshold for audit → client"</span>
+                    <span class="assumption-status holding">Holding</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: QUALIFIED_PROSPECT, Audit-to-Conversion Rate</span>
+                    <span>Evidence: 85% of conversions happen within 30 days. 15% leak possible.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"Expansion within 120 days signals sustainable relationship"</span>
+                    <span class="assumption-status untested">Untested</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: EXPANSION_EVENT, North Star Metric</span>
+                    <span>Need: Historical data on churn rates for expanders vs. non-expanders.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"Media buying is commoditizing due to AI/automation"</span>
+                    <span class="assumption-status holding">Holding</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: Strategic positioning, Creative vs. Media value</span>
+                    <span>Evidence: Platform automation (Smart Bidding, PMAX) reducing tactical advantage.</span>
+                </div>
+            </div>
+            
+            <div class="assumption-entry">
+                <div class="assumption-entry-header">
+                    <span class="assumption-text">"We can tag creative concepts consistently across team"</span>
+                    <span class="assumption-status stressed">Stressed</span>
+                </div>
+                <div class="assumption-meta">
+                    <span>Entities: CREATIVE_CONCEPT, Creative Pipeline Health</span>
+                    <span class="assumption-impact">Current tagging inconsistent. Need standardized taxonomy and training.</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Strategic Bets -->
+        <div class="section-header">
+            <h2>Strategic Bets (Convexity Analysis)</h2>
+            <span class="layer-tag dynamic">Dynamic Layer</span>
+        </div>
+        
+        <div class="bet-grid">
+            <div class="bet-card">
+                <div class="bet-header">
+                    <span class="bet-name">Creative Retainer Model Test</span>
+                    <span class="bet-type convex">Convex Bet</span>
+                </div>
+                <div class="bet-description">
+                    Test decoupled pricing with 2-3 new clients: fixed creative retainer + separate media buying fee. 
+                    This is the core strategic repositioning bet.
+                </div>
+                <div class="bet-metrics">
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Downside (capped)</span>
+                        <span class="bet-metric-value green">~$15K/quarter</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Upside (uncapped)</span>
+                        <span class="bet-metric-value green">Entire business model</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Time to Signal</span>
+                        <span class="bet-metric-value">90 days</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Falsifier</span>
+                        <span class="bet-metric-value amber">0/3 clients accept</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bet-card">
+                <div class="bet-header">
+                    <span class="bet-name">Creative Pipeline Systematization</span>
+                    <span class="bet-type linear">Linear Investment</span>
+                </div>
+                <div class="bet-description">
+                    Build cross-industry pattern library and standardized creative taxonomy. 
+                    Enables "Creative Pipeline Health" metric and differentiates from competitors.
+                </div>
+                <div class="bet-metrics">
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Investment</span>
+                        <span class="bet-metric-value">~40 hours/month</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Expected Return</span>
+                        <span class="bet-metric-value amber">+15% creative hit rate</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Time to Signal</span>
+                        <span class="bet-metric-value">6 months</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Falsifier</span>
+                        <span class="bet-metric-value amber">No hit rate improvement</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bet-card">
+                <div class="bet-header">
+                    <span class="bet-name">ROI Measurement Standardization</span>
+                    <span class="bet-type linear">Linear Investment</span>
+                </div>
+                <div class="bet-description">
+                    Implement standardized revenue tracking across clients (Hyros, Triple Whale, or custom). 
+                    Without this, North Star metric is unreliable.
+                </div>
+                <div class="bet-metrics">
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Investment</span>
+                        <span class="bet-metric-value">~$2K/mo + setup</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Expected Return</span>
+                        <span class="bet-metric-value green">North Star reliability</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Time to Signal</span>
+                        <span class="bet-metric-value">60 days</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Falsifier</span>
+                        <span class="bet-metric-value amber">Clients refuse tracking</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bet-card">
+                <div class="bet-header">
+                    <span class="bet-name">Content-Led Demand Generation</span>
+                    <span class="bet-type convex">Convex Bet</span>
+                </div>
+                <div class="bet-description">
+                    Thought leadership content positioning Inceptly as "creative pipeline experts" not "media buyers". 
+                    High optionality — one viral piece could shift market perception.
+                </div>
+                <div class="bet-metrics">
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Downside (capped)</span>
+                        <span class="bet-metric-value green">~10 hrs/week</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Upside (uncapped)</span>
+                        <span class="bet-metric-value green">Market positioning</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Time to Signal</span>
+                        <span class="bet-metric-value">3-6 months</span>
+                    </div>
+                    <div class="bet-metric">
+                        <span class="bet-metric-label">Falsifier</span>
+                        <span class="bet-metric-value amber">0 qualified leads from content</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <strong>The Ontology Map is the foundation.</strong> 
+            If these definitions are wrong, every dashboard built on them is wrong. 
+            Review assumptions monthly. Update when reality contradicts belief.
+            <br><br>
+            <em>"The map is never the territory. But a good map knows where it lies." — Bratrax Principle</em>
+        </div>
+    </div>
+</body>
+</html>

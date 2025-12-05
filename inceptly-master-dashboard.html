@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inceptly | Strategic Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --bg-card: #16161f;
+            --border: #2a2a3a;
+            --border-light: #3a3a4a;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b0;
+            --text-muted: #707080;
+            --accent-blue: #4a9eff;
+            --accent-purple: #9b7aff;
+            --accent-amber: #f5a623;
+            --accent-red: #ff6b6b;
+            --accent-green: #4ade80;
+            --accent-cyan: #22d3ee;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .logo-text span {
+            color: var(--accent-purple);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            height: 100%;
+        }
+        
+        .nav-tab {
+            padding: 0 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+        
+        .nav-tab:hover {
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+        }
+        
+        .nav-tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent-cyan);
+        }
+        
+        .nav-tab-icon {
+            font-size: 16px;
+        }
+        
+        .nav-tab-number {
+            font-size: 10px;
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+        
+        .nav-tab.active .nav-tab-number {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+        
+        .nav-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .nav-time {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--accent-green);
+        }
+        
+        .nav-status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: 56px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tab-content {
+            display: none;
+            flex: 1;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tab-content iframe {
+            width: 100%;
+            height: calc(100vh - 56px);
+            border: none;
+        }
+        
+        /* Overview Tab Styles */
+        .overview-container {
+            padding: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .overview-header {
+            margin-bottom: 32px;
+        }
+        
+        .overview-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .overview-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 700px;
+        }
+        
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .overview-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+        
+        .overview-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .overview-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .overview-card-icon.purple { background: rgba(155, 122, 255, 0.15); color: var(--accent-purple); }
+        .overview-card-icon.blue { background: rgba(74, 158, 255, 0.15); color: var(--accent-blue); }
+        .overview-card-icon.cyan { background: rgba(34, 211, 238, 0.15); color: var(--accent-cyan); }
+        .overview-card-icon.amber { background: rgba(245, 166, 35, 0.15); color: var(--accent-amber); }
+        .overview-card-icon.green { background: rgba(74, 222, 128, 0.15); color: var(--accent-green); }
+        
+        .overview-card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .overview-card-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .overview-card-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .overview-card-stat {
+            flex: 1;
+        }
+        
+        .overview-card-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .overview-card-stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* North Star Section */
+        .north-star-section {
+            background: linear-gradient(135deg, rgba(155, 122, 255, 0.1), rgba(74, 158, 255, 0.1));
+            border: 1px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+        
+        .north-star-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        
+        .north-star-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-purple);
+            margin-bottom: 8px;
+        }
+        
+        .north-star-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .north-star-metric {
+            text-align: right;
+        }
+        
+        .north-star-value {
+            font-size: 48px;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--accent-cyan);
+        }
+        
+        .north-star-target {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .north-star-inputs {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+        }
+        
+        @media (max-width: 1200px) {
+            .north-star-inputs {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .ns-input {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .ns-input-name {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .ns-input-value {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            margin-bottom: 4px;
+        }
+        
+        .ns-input-value.up { color: var(--accent-green); }
+        .ns-input-value.down { color: var(--accent-red); }
+        .ns-input-value.flat { color: var(--text-muted); }
+        
+        .ns-input-bets {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        .ns-input-bets span {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        
+        /* Alerts Section */
+        .alerts-section {
+            margin-bottom: 40px;
+        }
+        
+        .alerts-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .alerts-header .count {
+            background: var(--accent-red);
+            color: var(--bg-primary);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 12px;
+        }
+        
+        .alert-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .alert-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        
+        .alert-indicator.critical { background: var(--accent-red); animation: pulse 2s infinite; }
+        .alert-indicator.warning { background: var(--accent-amber); }
+        .alert-indicator.info { background: var(--accent-blue); }
+        
+        .alert-content { flex: 1; }
+        
+        .alert-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .alert-description {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Philosophy Footer */
+        .philosophy-footer {
+            background: var(--bg-tertiary);
+            border-top: 1px solid var(--border);
+            padding: 16px 32px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .philosophy-footer em {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="logo">
+            <div class="logo-icon">I</div>
+            <div class="logo-text">Inceptly <span>Dashboard</span></div>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">
+                <span class="nav-tab-icon">◉</span>
+                Overview
+            </button>
+            <button class="nav-tab" data-tab="ontology">
+                <span class="nav-tab-icon">◇</span>
+                Ontology
+            </button>
+            <button class="nav-tab" data-tab="hypothesis">
+                <span class="nav-tab-icon">⟁</span>
+                Hypotheses
+            </button>
+            <button class="nav-tab" data-tab="signals">
+                <span class="nav-tab-icon">◈</span>
+                Signals
+                <span class="nav-tab-number">3</span>
+            </button>
+            <button class="nav-tab" data-tab="fragility">
+                <span class="nav-tab-icon">⚡</span>
+                Fragility
+            </button>
+            <button class="nav-tab" data-tab="actions">
+                <span class="nav-tab-icon">▶</span>
+                Actions
+                <span class="nav-tab-number">12</span>
+            </button>
+        </div>
+        
+        <div class="nav-meta">
+            <div class="nav-time" id="nav-time">--:-- --</div>
+            <div class="nav-status">
+                <div class="nav-status-dot"></div>
+                Live
+            </div>
+        </div>
+    </nav>
+    
+    <main class="main-content">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="tab-overview">
+            <div class="overview-container">
+                <div class="overview-header">
+                    <h1>Strategic Command Center</h1>
+                    <p>Unified view of Inceptly's North Star, input metrics, active bets, and signals. Built on Bratrax principles: Test. Stress. Hedge. Learn. Repeat.</p>
+                </div>
+                
+                <!-- North Star -->
+                <div class="north-star-section">
+                    <div class="north-star-header">
+                        <div>
+                            <div class="north-star-title">North Star Metric</div>
+                            <div class="north-star-name">Self-Sustaining Growth Engine</div>
+                        </div>
+                        <div class="north-star-metric">
+                            <div class="north-star-value">?</div>
+                            <div class="north-star-target">Qualified prospects → ROI+ → Expanding (120d)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="north-star-inputs">
+                        <div class="ns-input">
+                            <div class="ns-input-name">Prospects</div>
+                            <div class="ns-input-value up">12</div>
+                            <div class="ns-input-bets"><span>3</span> bets</div>
+                        </div>
+                        <div class="ns-input">
+                            <div class="ns-input-name">Audit CVR</div>
+                            <div class="ns-input-value up">38%</div>
+                            <div class="ns-input-bets"><span>2</span> bets</div>
+                        </div>
+                        <div class="ns-input">
+                            <div class="ns-input-name">Time-to-ROI</div>
+                            <div class="ns-input-value flat">42d</div>
+                            <div class="ns-input-bets"><span>1</span> bet</div>
+                        </div>
+                        <div class="ns-input">
+                            <div class="ns-input-name">Creative</div>
+                            <div class="ns-input-value down">2.3</div>
+                            <div class="ns-input-bets"><span>2</span> bets</div>
+                        </div>
+                        <div class="ns-input">
+                            <div class="ns-input-name">Expansion</div>
+                            <div class="ns-input-value down">28%</div>
+                            <div class="ns-input-bets"><span>1</span> bet</div>
+                        </div>
+                        <div class="ns-input">
+                            <div class="ns-input-name">Pricing Mix</div>
+                            <div class="ns-input-value up">15%</div>
+                            <div class="ns-input-bets"><span>2</span> bets</div>
+                        </div>
+                        <div class="ns-input">
+                            <div class="ns-input-name">Referrals</div>
+                            <div class="ns-input-value flat">3</div>
+                            <div class="ns-input-bets"><span>1</span> bet</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alerts -->
+                <div class="alerts-section">
+                    <div class="alerts-header">
+                        Active Signals
+                        <span class="count">3</span>
+                    </div>
+                    <div class="alerts-grid">
+                        <div class="alert-card">
+                            <div class="alert-indicator critical"></div>
+                            <div class="alert-content">
+                                <div class="alert-title">Creative velocity declining 4 weeks straight</div>
+                                <div class="alert-description">Contradicts hypothesis: "We can maintain pipeline health at scale." Investigate capacity.</div>
+                            </div>
+                        </div>
+                        <div class="alert-card">
+                            <div class="alert-indicator warning"></div>
+                            <div class="alert-content">
+                                <div class="alert-title">2 clients approaching expansion window</div>
+                                <div class="alert-description">Acme Health & PureProtein at Day 85+, no expansion conversation logged.</div>
+                            </div>
+                        </div>
+                        <div class="alert-card">
+                            <div class="alert-indicator info"></div>
+                            <div class="alert-content">
+                                <div class="alert-title">Content-sourced audits +180% MoM</div>
+                                <div class="alert-description">Validates hypothesis: content marketing drives qualified prospects. Consider doubling down.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Cards -->
+                <div class="overview-grid">
+                    <div class="overview-card" onclick="switchTab('ontology')">
+                        <div class="overview-card-header">
+                            <div class="overview-card-icon purple">◇</div>
+                            <div class="overview-card-title">Ontology Map</div>
+                        </div>
+                        <div class="overview-card-description">Entity definitions, data lineage, join confidence, and assumption tracking. The semantic foundation.</div>
+                        <div class="overview-card-stats">
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value">8</div>
+                                <div class="overview-card-stat-label">Entities</div>
+                            </div>
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-amber);">55%</div>
+                                <div class="overview-card-stat-label">NS Reliability</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card" onclick="switchTab('hypothesis')">
+                        <div class="overview-card-header">
+                            <div class="overview-card-icon blue">⟁</div>
+                            <div class="overview-card-title">Hypothesis Network</div>
+                        </div>
+                        <div class="overview-card-description">Causal beliefs about how value flows. Each metric tagged with hypothesis and falsifier.</div>
+                        <div class="overview-card-stats">
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value">7</div>
+                                <div class="overview-card-stat-label">Inputs</div>
+                            </div>
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value">8</div>
+                                <div class="overview-card-stat-label">Hypotheses</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card" onclick="switchTab('signals')">
+                        <div class="overview-card-header">
+                            <div class="overview-card-icon cyan">◈</div>
+                            <div class="overview-card-title">Signal Detection</div>
+                        </div>
+                        <div class="overview-card-description">Real-time hypothesis validation. Anomaly detection. Activity feed. What's breaking now?</div>
+                        <div class="overview-card-stats">
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-red);">3</div>
+                                <div class="overview-card-stat-label">Active Signals</div>
+                            </div>
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-green);">2</div>
+                                <div class="overview-card-stat-label">Confirmed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card" onclick="switchTab('fragility')">
+                        <div class="overview-card-header">
+                            <div class="overview-card-icon amber">⚡</div>
+                            <div class="overview-card-title">Fragility Map</div>
+                        </div>
+                        <div class="overview-card-description">Where does the business break? Where are cheap bets with unlimited upside? The barbell.</div>
+                        <div class="overview-card-stats">
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-red);">3</div>
+                                <div class="overview-card-stat-label">Critical</div>
+                            </div>
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-green);">6</div>
+                                <div class="overview-card-stat-label">Options</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card" onclick="switchTab('actions')">
+                        <div class="overview-card-header">
+                            <div class="overview-card-icon green">▶</div>
+                            <div class="overview-card-title">Action Board</div>
+                        </div>
+                        <div class="overview-card-description">What bets are running against each input? Who owns them? What's blocked? Inputs move only if we work on them.</div>
+                        <div class="overview-card-stats">
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-green);">12</div>
+                                <div class="overview-card-stat-label">Active Bets</div>
+                            </div>
+                            <div class="overview-card-stat">
+                                <div class="overview-card-stat-value" style="color: var(--accent-red);">2</div>
+                                <div class="overview-card-stat-label">Blocked</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="philosophy-footer">
+                <strong>Bratrax Principles:</strong> Every metric is a hypothesis. Dashboards show organized ignorance, not clarity. When data conflicts with reality, reality wins.
+                <br><em>"Test. Stress. Hedge. Learn. Repeat."</em>
+            </div>
+        </div>
+        
+        <!-- Ontology Tab -->
+        <div class="tab-content" id="tab-ontology">
+            <iframe src="inceptly-ontology-map.html"></iframe>
+        </div>
+        
+        <!-- Hypothesis Tab -->
+        <div class="tab-content" id="tab-hypothesis">
+            <iframe src="inceptly-hypothesis-network.html"></iframe>
+        </div>
+        
+        <!-- Signals Tab -->
+        <div class="tab-content" id="tab-signals">
+            <iframe src="inceptly-signal-board.html"></iframe>
+        </div>
+        
+        <!-- Fragility Tab -->
+        <div class="tab-content" id="tab-fragility">
+            <iframe src="inceptly-fragility-map.html"></iframe>
+        </div>
+        
+        <!-- Actions Tab -->
+        <div class="tab-content" id="tab-actions">
+            <iframe src="inceptly-action-board.html"></iframe>
+        </div>
+    </main>
+    
+    <script>
+        // Tab switching
+        function switchTab(tabId) {
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+        
+        // Nav tab click handlers
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        });
+        
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('nav-time').textContent = now.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

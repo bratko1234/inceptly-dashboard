@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inceptly | Action Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f; --bg-secondary: #12121a; --bg-tertiary: #1a1a24; --bg-card: #16161f;
+            --border: #2a2a3a; --border-light: #3a3a4a;
+            --text-primary: #e8e8f0; --text-secondary: #a0a0b0; --text-muted: #707080;
+            --accent-blue: #4a9eff; --accent-purple: #9b7aff; --accent-amber: #f5a623;
+            --accent-red: #ff6b6b; --accent-green: #4ade80; --accent-cyan: #22d3ee;
+            --status-active: #4ade80; --status-blocked: #ff6b6b; --status-planning: #f5a623; --status-complete: #4a9eff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'IBM Plex Sans', system-ui, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+        .container { max-width: 1800px; margin: 0 auto; padding: 32px; }
+        
+        header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        h1 span { color: var(--accent-green); }
+        .subtitle { font-size: 14px; color: var(--text-secondary); max-width: 600px; }
+        
+        .header-stats { display: flex; gap: 24px; }
+        .header-stat { text-align: center; padding: 12px 20px; background: var(--bg-secondary); border-radius: 8px; }
+        .header-stat-value { font-size: 24px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+        .header-stat-value.active { color: var(--status-active); }
+        .header-stat-value.blocked { color: var(--status-blocked); }
+        .header-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+        
+        .philosophy-note { background: var(--bg-tertiary); border-left: 3px solid var(--accent-green); padding: 12px 16px; font-size: 13px; color: var(--text-secondary); margin-bottom: 32px; }
+        .philosophy-note em { color: var(--text-primary); font-style: normal; }
+        
+        /* Input Sections */
+        .input-section { margin-bottom: 40px; }
+        .input-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .input-number { font-size: 12px; font-weight: 700; color: var(--bg-primary); background: var(--accent-cyan); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .input-title { font-size: 16px; font-weight: 600; flex: 1; }
+        .input-metric { font-size: 20px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+        .input-metric.up { color: var(--accent-green); }
+        .input-metric.down { color: var(--accent-red); }
+        .input-metric.flat { color: var(--text-muted); }
+        .input-target { font-size: 11px; color: var(--text-muted); }
+        
+        /* Bet Cards */
+        .bets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 12px; }
+        
+        .bet-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; position: relative; }
+        .bet-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 10px 0 0 10px; }
+        .bet-card.active::before { background: var(--status-active); }
+        .bet-card.blocked::before { background: var(--status-blocked); }
+        .bet-card.planning::before { background: var(--status-planning); }
+        .bet-card.complete::before { background: var(--status-complete); }
+        
+        .bet-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .bet-title { font-size: 13px; font-weight: 600; }
+        .bet-status { font-size: 9px; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
+        .bet-status.active { background: rgba(74, 222, 128, 0.15); color: var(--status-active); }
+        .bet-status.blocked { background: rgba(255, 107, 107, 0.15); color: var(--status-blocked); }
+        .bet-status.planning { background: rgba(245, 166, 35, 0.15); color: var(--status-planning); }
+        .bet-status.complete { background: rgba(74, 158, 255, 0.15); color: var(--status-complete); }
+        
+        .bet-type { font-size: 9px; color: var(--accent-purple); font-family: 'IBM Plex Mono', monospace; margin-bottom: 8px; }
+        .bet-description { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+        
+        .bet-progress { margin-bottom: 12px; }
+        .bet-progress-header { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 4px; }
+        .bet-progress-header span:first-child { color: var(--text-muted); }
+        .bet-progress-header span:last-child { color: var(--text-primary); font-family: 'IBM Plex Mono', monospace; }
+        .bet-progress-bar { height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; }
+        .bet-progress-fill { height: 100%; border-radius: 3px; background: var(--accent-purple); }
+        
+        .bet-meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .bet-meta-item { }
+        .bet-meta-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
+        .bet-meta-value { font-size: 11px; color: var(--text-secondary); }
+        
+        .bet-signal { margin-top: 12px; padding: 8px 10px; border-radius: 6px; font-size: 11px; }
+        .bet-signal.success { background: rgba(74, 222, 128, 0.08); color: var(--accent-green); }
+        .bet-signal.warning { background: rgba(245, 166, 35, 0.08); color: var(--accent-amber); }
+        .bet-signal.danger { background: rgba(255, 107, 107, 0.08); color: var(--accent-red); }
+        
+        /* No Bets State */
+        .no-bets { background: var(--bg-tertiary); border: 1px dashed var(--border); border-radius: 8px; padding: 24px; text-align: center; }
+        .no-bets-icon { font-size: 24px; margin-bottom: 8px; }
+        .no-bets-text { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+        .no-bets-action { font-size: 12px; color: var(--accent-amber); }
+        
+        /* Summary Section */
+        .summary-section { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 40px; }
+        .summary-header { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+        @media (max-width: 1200px) { .summary-grid { grid-template-columns: repeat(4, 1fr); } }
+        
+        .summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+        .summary-card-title { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .summary-card-metric { font-size: 18px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; }
+        .summary-card-bets { font-size: 10px; color: var(--text-muted); }
+        .summary-card-bets span { color: var(--accent-green); font-weight: 600; }
+        
+        /* Quick Actions */
+        .quick-actions { display: flex; gap: 12px; margin-bottom: 32px; }
+        .quick-action { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; }
+        .quick-action:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+        .quick-action-icon { font-size: 16px; }
+        
+        .footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
+        .footer em { display: block; margin-top: 8px; font-style: italic; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Inceptly <span>Action Board</span></h1>
+                <div class="subtitle">Inputs only move if we're working on them. Every bet mapped to an input. No orphan metrics.</div>
+            </div>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-value active">12</div>
+                    <div class="header-stat-label">Active Bets</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value blocked">2</div>
+                    <div class="header-stat-label">Blocked</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" style="color: var(--status-planning);">3</div>
+                    <div class="header-stat-label">Planning</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="philosophy-note">
+            <strong>Operational Compass:</strong> <em>"If you're not running bets against an input, that input won't move."</em> 
+            Every metric is a function of actions. Track the actions, not just the outputs. Inputs without bets are wishes.
+        </div>
+        
+        <!-- Summary -->
+        <div class="summary-section">
+            <div class="summary-header">Input Coverage — At a Glance</div>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-card-title">Prospect Pipeline</div>
+                    <div class="summary-card-metric">12</div>
+                    <div class="summary-card-bets"><span>3</span> active bets</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-title">Audit Conversion</div>
+                    <div class="summary-card-metric">38%</div>
+                    <div class="summary-card-bets"><span>2</span> active bets</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-title">Time-to-ROI</div>
+                    <div class="summary-card-metric">42d</div>
+                    <div class="summary-card-bets"><span>1</span> active bet</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-title">Creative Pipeline</div>
+                    <div class="summary-card-metric" style="color: var(--accent-red);">2.3</div>
+                    <div class="summary-card-bets"><span>2</span> active bets</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-title">Expansion Rate</div>
+                    <div class="summary-card-metric" style="color: var(--accent-amber);">28%</div>
+                    <div class="summary-card-bets"><span>1</span> active bet</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-title">Pricing Model</div>
+                    <div class="summary-card-metric">15%</div>
+                    <div class="summary-card-bets"><span>2</span> active bets</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-title">Referrals</div>
+                    <div class="summary-card-metric">3</div>
+                    <div class="summary-card-bets"><span>1</span> active bet</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 1: Qualified Prospect Pipeline -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">1</span>
+                <span class="input-title">Qualified Prospect Pipeline</span>
+                <div>
+                    <div class="input-metric up">12 /mo ↑</div>
+                    <div class="input-target">Target: 15/mo</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Content-Led Demand Generation</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">CONVEX BET • High optionality</div>
+                    <div class="bet-description">Weekly thought leadership content positioning as "creative pipeline experts." Newsletter + LinkedIn + case studies.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>45%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 45%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Marketing</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Ongoing</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">10 hrs/wk</div>
+                        </div>
+                    </div>
+                    <div class="bet-signal success">✓ Content-sourced audits +180% MoM. Signal: working.</div>
+                </div>
+                
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Referral Program Systematization</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Predictable return</div>
+                    <div class="bet-description">Formalize referral asks at expansion milestones. Track referral sources. Incentive structure.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>30%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 30%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Account Mgmt</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Q1 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">20 hrs setup</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bet-card planning">
+                    <div class="bet-header">
+                        <span class="bet-title">Vidtao Cross-Promotion</span>
+                        <span class="bet-status planning">Planning</span>
+                    </div>
+                    <div class="bet-type">CONVEX BET • Distribution leverage</div>
+                    <div class="bet-description">Leverage Vidtao audience for demand. Built-in distribution to exact ICP. Co-branded content.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>10%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 10%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Leadership</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Q1 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">TBD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 2: Audit-to-Conversion -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">2</span>
+                <span class="input-title">Audit-to-Conversion Rate</span>
+                <div>
+                    <div class="input-metric up">38% ↑</div>
+                    <div class="input-target">Target: 40%</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Creative-First Audit Positioning</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">STRATEGIC • Repositioning</div>
+                    <div class="bet-description">Restructure audit to lead with creative pipeline assessment. Position media buying as execution support.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>60%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 60%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Sales Lead</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Dec 2024</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">Process change</div>
+                        </div>
+                    </div>
+                    <div class="bet-signal success">✓ Last 3 audits used new format. 2/3 converted.</div>
+                </div>
+                
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Follow-Up Speed Optimization</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Quick win</div>
+                    <div class="bet-description">Reduce audit-to-follow-up time from 48hrs to 24hrs. Templated proposals. Automated scheduling.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>80%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 80%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Sales Ops</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">This week</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">5 hrs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 3: Time-to-First-ROI -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">3</span>
+                <span class="input-title">Time-to-First-ROI</span>
+                <div>
+                    <div class="input-metric flat">42 days —</div>
+                    <div class="input-target">Target: 30 days</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card blocked">
+                    <div class="bet-header">
+                        <span class="bet-title">ROI Measurement Standardization</span>
+                        <span class="bet-status blocked">Blocked</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Foundation fix</div>
+                    <div class="bet-description">Implement standardized tracking across clients. Without this, Time-to-ROI is unmeasurable for 40% of clients.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>15%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 15%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Analytics</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Q1 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">$2K/mo + setup</div>
+                        </div>
+                    </div>
+                    <div class="bet-signal danger">⚠ Blocked: Need tool selection decision. Evaluating Hyros vs Triple Whale.</div>
+                </div>
+                
+                <div class="bet-card planning">
+                    <div class="bet-header">
+                        <span class="bet-title">Quick Wins Playbook</span>
+                        <span class="bet-status planning">Planning</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Process</div>
+                    <div class="bet-description">Identify low-hanging fruit campaigns for each new client. Get first win in Week 2, not Week 6.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>5%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 5%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Media Team</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Q1 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">15 hrs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 4: Creative Pipeline Health -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">4</span>
+                <span class="input-title">Creative Pipeline Health</span>
+                <div>
+                    <div class="input-metric down">2.3 /client ↓</div>
+                    <div class="input-target">Target: 3.5/client</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Creative Taxonomy & Tagging</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Foundation</div>
+                    <div class="bet-description">Standardize creative concept tagging across team. Enable measurement of "above-average" performance.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>40%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 40%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Creative Lead</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Jan 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">30 hrs</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bet-card blocked">
+                    <div class="bet-header">
+                        <span class="bet-title">Cross-Industry Pattern Library</span>
+                        <span class="bet-status blocked">Blocked</span>
+                    </div>
+                    <div class="bet-type">CONVEX BET • IP creation</div>
+                    <div class="bet-description">Systematize creative patterns from all verticals. Becomes proprietary IP. Requires taxonomy first.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>10%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 10%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Creative Lead</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Q2 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">40 hrs</div>
+                        </div>
+                    </div>
+                    <div class="bet-signal warning">⚠ Blocked by: Creative Taxonomy bet must complete first.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 5: Expansion Rate -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">5</span>
+                <span class="input-title">Client Relationship Expansion Rate</span>
+                <div>
+                    <div class="input-metric down">28% ↓</div>
+                    <div class="input-target">Target: 40%</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Expansion Playbook</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Process</div>
+                    <div class="bet-description">Systematic playbook for expansion conversations at ROI milestones. Day 30, 60, 90 touchpoints.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>55%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 55%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Account Mgmt</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Dec 2024</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">20 hrs</div>
+                        </div>
+                    </div>
+                    <div class="bet-signal warning">⚠ 2 clients approaching 90-day window with no expansion conversation logged.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 6: Pricing Model Innovation -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">6</span>
+                <span class="input-title">Pricing Model Innovation</span>
+                <div>
+                    <div class="input-metric up">15% ↑</div>
+                    <div class="input-target">Target: 50%</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Creative Retainer Model Test</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">CONVEX BET • CORE STRATEGIC TEST</div>
+                    <div class="bet-description">Test decoupled pricing with 2-3 new clients: fixed creative retainer + separate media buying fee.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>33%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 33%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Leadership</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Feb 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">~$15K risk</div>
+                        </div>
+                    </div>
+                    <div class="bet-signal success">✓ 1/3 test clients signed (MindStack). 2nd in negotiation.</div>
+                </div>
+                
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Existing Client Migration</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Gradual transition</div>
+                    <div class="bet-description">Migrate existing clients to hybrid/creative retainer model at contract renewals. Start with highest-risk (budget scaling).</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>20%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 20%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Account Mgmt</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Ongoing</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">Conversation time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input 7: Referral & Case Studies -->
+        <div class="input-section">
+            <div class="input-header">
+                <span class="input-number">7</span>
+                <span class="input-title">Referral & Case Study Generation</span>
+                <div>
+                    <div class="input-metric flat">3 /qtr —</div>
+                    <div class="input-target">Target: 6/qtr</div>
+                </div>
+            </div>
+            <div class="bets-grid">
+                <div class="bet-card active">
+                    <div class="bet-header">
+                        <span class="bet-title">Case Study Production Pipeline</span>
+                        <span class="bet-status active">Active</span>
+                    </div>
+                    <div class="bet-type">LINEAR • Content asset</div>
+                    <div class="bet-description">Formalize case study creation at ROI milestones. Template + approval process. Target: 1 case study per expansion.</div>
+                    <div class="bet-progress">
+                        <div class="bet-progress-header"><span>Progress</span><span>35%</span></div>
+                        <div class="bet-progress-bar"><div class="bet-progress-fill" style="width: 35%;"></div></div>
+                    </div>
+                    <div class="bet-meta">
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Owner</div>
+                            <div class="bet-meta-value">Marketing</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Timeline</div>
+                            <div class="bet-meta-value">Jan 2025</div>
+                        </div>
+                        <div class="bet-meta-item">
+                            <div class="bet-meta-label">Investment</div>
+                            <div class="bet-meta-value">8 hrs/case study</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <strong>Inputs don't move themselves.</strong> Every input needs active bets. Every bet needs an owner. Every owner needs a deadline.
+            <em>"Embed before you build. Falsify fast. Don't scale complexity." — Bratrax</em>
+        </div>
+    </div>
+</body>
+</html>

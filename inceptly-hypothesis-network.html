@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inceptly | Causal Hypothesis Network</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f; --bg-secondary: #12121a; --bg-tertiary: #1a1a24; --bg-card: #16161f;
+            --border: #2a2a3a; --border-light: #3a3a4a;
+            --text-primary: #e8e8f0; --text-secondary: #a0a0b0; --text-muted: #707080;
+            --accent-blue: #4a9eff; --accent-purple: #9b7aff; --accent-amber: #f5a623;
+            --accent-red: #ff6b6b; --accent-green: #4ade80; --accent-cyan: #22d3ee;
+            --mediocristan: #4ade80; --mediocristan-bg: rgba(74, 222, 128, 0.08);
+            --transitional: #f5a623; --transitional-bg: rgba(245, 166, 35, 0.08);
+            --extremistan: #ff6b6b; --extremistan-bg: rgba(255, 107, 107, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'IBM Plex Sans', system-ui, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 40px 32px; }
+        header { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        h1 span { color: var(--accent-blue); }
+        .subtitle { font-size: 14px; color: var(--text-secondary); max-width: 700px; margin-bottom: 20px; }
+        
+        .legend { display: flex; gap: 32px; background: var(--bg-secondary); padding: 12px 20px; border-radius: 8px; margin-bottom: 24px; }
+        .legend-section { display: flex; gap: 16px; align-items: center; }
+        .legend-title { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .legend-dot.mediocristan { background: var(--mediocristan); }
+        .legend-dot.transitional { background: var(--transitional); }
+        .legend-dot.extremistan { background: var(--extremistan); }
+        
+        .philosophy-note { background: var(--bg-tertiary); border-left: 3px solid var(--accent-blue); padding: 12px 16px; font-size: 13px; color: var(--text-secondary); margin-bottom: 32px; }
+        .philosophy-note em { color: var(--text-primary); font-style: normal; }
+        
+        /* North Star */
+        .north-star-section { margin-bottom: 40px; }
+        .north-star-card { background: linear-gradient(135deg, rgba(155, 122, 255, 0.1), rgba(74, 158, 255, 0.1)); border: 2px solid var(--accent-purple); border-radius: 12px; padding: 24px; }
+        .ns-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .ns-name { font-size: 14px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+        .ns-value { font-size: 32px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 8px; }
+        .ns-definition { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+        
+        .hypothesis-block { background: var(--bg-tertiary); padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; }
+        .hypothesis-label { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 4px; }
+        .hypothesis-text { font-size: 12px; color: var(--text-secondary); }
+        
+        .falsifier-block { background: rgba(255, 107, 107, 0.05); border-left: 2px solid var(--accent-red); padding: 12px 16px; margin-bottom: 12px; }
+        .falsifier-label { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--accent-red); margin-bottom: 4px; }
+        .falsifier-text { font-size: 12px; color: var(--text-muted); }
+        
+        .confidence-row { display: flex; align-items: center; gap: 12px; }
+        .confidence-label { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+        .confidence-bar { flex: 1; height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; max-width: 200px; }
+        .confidence-fill { height: 100%; border-radius: 3px; }
+        .confidence-fill.high { background: var(--accent-green); }
+        .confidence-fill.medium { background: var(--accent-amber); }
+        .confidence-fill.low { background: var(--accent-red); }
+        .confidence-value { font-size: 12px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+        
+        /* Input Grid */
+        .section-header { font-size: 16px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .section-header span { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+        
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        
+        .metric-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .metric-card.mediocristan { border-left: 3px solid var(--mediocristan); }
+        .metric-card.transitional { border-left: 3px solid var(--transitional); }
+        .metric-card.extremistan { border-left: 3px solid var(--extremistan); }
+        .metric-card.strategic { border-left: 3px solid var(--accent-purple); }
+        
+        .mc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .mc-name { font-size: 12px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+        .domain-tag { font-size: 9px; font-weight: 600; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
+        .domain-tag.mediocristan { background: var(--mediocristan-bg); color: var(--mediocristan); }
+        .domain-tag.transitional { background: var(--transitional-bg); color: var(--transitional); }
+        .domain-tag.extremistan { background: var(--extremistan-bg); color: var(--extremistan); }
+        .domain-tag.strategic { background: rgba(155, 122, 255, 0.15); color: var(--accent-purple); }
+        
+        .mc-value { font-size: 24px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; }
+        .mc-label { font-size: 10px; color: var(--text-muted); margin-bottom: 12px; }
+        .mc-definition { font-size: 11px; color: var(--text-secondary); margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        
+        /* Fragility Alert */
+        .fragility-alert { background: rgba(255, 107, 107, 0.08); border: 1px solid rgba(255, 107, 107, 0.3); border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+        .fragility-alert-header { font-size: 13px; font-weight: 600; color: var(--accent-red); margin-bottom: 6px; }
+        .fragility-alert-content { font-size: 12px; color: var(--text-secondary); }
+        
+        /* Influence Grid */
+        .influence-section { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .influence-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        @media (max-width: 1200px) { .influence-grid { grid-template-columns: repeat(2, 1fr); } }
+        .influence-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+        .influence-card-header { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
+        .influence-list { display: flex; flex-direction: column; gap: 6px; }
+        .influence-item { font-size: 11px; color: var(--text-secondary); padding-left: 10px; border-left: 2px solid var(--border); }
+        
+        .footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
+        .footer em { display: block; margin-top: 8px; font-style: italic; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Inceptly <span>Causal Hypothesis Network</span></h1>
+            <div class="subtitle">Every metric is a hypothesis awaiting refutation. Domain tags indicate volatility: optimize in Mediocristan, explore in Extremistan.</div>
+            <div class="legend">
+                <div class="legend-section">
+                    <span class="legend-title">Domain:</span>
+                    <div class="legend-item"><div class="legend-dot mediocristan"></div>Mediocristan — optimize</div>
+                    <div class="legend-item"><div class="legend-dot transitional"></div>Transitional — mixed</div>
+                    <div class="legend-item"><div class="legend-dot extremistan"></div>Extremistan — explore</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="philosophy-note">
+            <strong>Popper Principle:</strong> <em>"We don't prove. We survive refutation."</em> 
+            Every input metric has a falsifier. When a falsifier triggers, update the model.
+        </div>
+        
+        <!-- North Star -->
+        <div class="north-star-section">
+            <div class="north-star-card">
+                <div class="ns-header">
+                    <span class="ns-name">NORTH STAR: SELF-SUSTAINING GROWTH ENGINE</span>
+                    <span class="domain-tag transitional">Mixed Domain</span>
+                </div>
+                <div class="ns-value">? / month</div>
+                <div class="ns-definition">Qualified prospects entering funnel per month who convert to expanding ROI-positive relationships within 120 days.</div>
+                
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">This metric captures sustainable growth because it requires the full journey: demand → conversion → value delivery → expansion. It addresses both core challenges (demand gen AND retention) in one measure.</div>
+                </div>
+                
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Becomes meaningless if</div>
+                    <div class="falsifier-text">(1) ROI cannot be reliably measured — currently 40% unreliable. (2) Expansion events not tracked — referrals missed. (3) 120-day window is wrong.</div>
+                </div>
+                
+                <div class="confidence-row">
+                    <span class="confidence-label">Measurability</span>
+                    <div class="confidence-bar"><div class="confidence-fill low" style="width: 55%;"></div></div>
+                    <span class="confidence-value">55%</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fragility Alert -->
+        <div class="fragility-alert">
+            <div class="fragility-alert-header">⚠️ Critical Fragility: ROI Measurement Gap</div>
+            <div class="fragility-alert-content"><strong>~40% of clients have unreliable ROI attribution.</strong> This breaks the North Star metric at its foundation. Recommended: Implement tracking standard as prerequisite for new clients.</div>
+        </div>
+        
+        <!-- Input Metrics -->
+        <div class="section-header">Input Metrics <span>— 7 levers that feed the North Star</span></div>
+        
+        <div class="input-grid">
+            <div class="metric-card extremistan">
+                <div class="mc-header">
+                    <span class="mc-name">QUALIFIED PROSPECT PIPELINE</span>
+                    <span class="domain-tag extremistan">Extremistan</span>
+                </div>
+                <div class="mc-value">? /mo</div>
+                <div class="mc-label">Input #1 — Demand Gen (Breadth)</div>
+                <div class="mc-definition">Number of qualified companies requesting audits per month.</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">More qualified prospects = more opportunities. Demand is fuel for the engine.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">Increased prospects don't lead to conversions (quality problem, not quantity).</div>
+                </div>
+            </div>
+            
+            <div class="metric-card transitional">
+                <div class="mc-header">
+                    <span class="mc-name">AUDIT-TO-CONVERSION RATE</span>
+                    <span class="domain-tag transitional">Transitional</span>
+                </div>
+                <div class="mc-value">~35%</div>
+                <div class="mc-label">Input #2 — Conversion (Efficiency)</div>
+                <div class="mc-definition">% of audits that convert to active clients within 30 days.</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Audits are our best conversion mechanism. They demonstrate expertise before commitment.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">Rate drops below 25% despite consistent audit quality.</div>
+                </div>
+            </div>
+            
+            <div class="metric-card transitional">
+                <div class="mc-header">
+                    <span class="mc-name">TIME-TO-FIRST-ROI</span>
+                    <span class="domain-tag transitional">Transitional</span>
+                </div>
+                <div class="mc-value">? days</div>
+                <div class="mc-label">Input #3 — Value Delivery (Efficiency)</div>
+                <div class="mc-definition">Days from campaign launch to first ROI-positive result (ROI > 1.0).</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Faster ROI builds trust. First 30 days critical for confidence.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">Fast ROI clients churn at same rate as slow ROI clients.</div>
+                </div>
+            </div>
+            
+            <div class="metric-card extremistan">
+                <div class="mc-header">
+                    <span class="mc-name">CREATIVE PIPELINE HEALTH</span>
+                    <span class="domain-tag extremistan">Extremistan</span>
+                </div>
+                <div class="mc-value">? /client</div>
+                <div class="mc-label">Input #4 — Differentiation (Depth)</div>
+                <div class="mc-definition"># of tested creative concepts per client/month achieving above-average performance.</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Creative is our true differentiator. Harder to replicate than media buying.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ CORE STRATEGIC TEST</div>
+                    <div class="falsifier-text">Clients refuse to pay creative retainer separately → market doesn't value creative.</div>
+                </div>
+            </div>
+            
+            <div class="metric-card mediocristan">
+                <div class="mc-header">
+                    <span class="mc-name">EXPANSION RATE</span>
+                    <span class="domain-tag mediocristan">Mediocristan</span>
+                </div>
+                <div class="mc-value">? %</div>
+                <div class="mc-label">Input #5 — Retention (Frequency)</div>
+                <div class="mc-definition">% of ROI-positive clients who expand (budget +20%, new services, contract, referral) within 90 days.</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Expansion signals trust. Expanding clients less likely to churn.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">Expanders churn at same rate as non-expanders.</div>
+                </div>
+            </div>
+            
+            <div class="metric-card mediocristan">
+                <div class="mc-header">
+                    <span class="mc-name">PRICING MODEL INNOVATION</span>
+                    <span class="domain-tag mediocristan">Mediocristan</span>
+                </div>
+                <div class="mc-value">? %</div>
+                <div class="mc-label">Input #6 — Retention (Efficiency)</div>
+                <div class="mc-definition">% of clients on innovative pricing (not pure ad spend %).</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Decoupling pricing prevents "too expensive at scale" problem.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">Innovative model clients churn at same rate as traditional.</div>
+                </div>
+            </div>
+            
+            <div class="metric-card extremistan">
+                <div class="mc-header">
+                    <span class="mc-name">REFERRAL & CASE STUDIES</span>
+                    <span class="domain-tag extremistan">Extremistan</span>
+                </div>
+                <div class="mc-value">? /qtr</div>
+                <div class="mc-label">Input #7 — Demand Loop (Breadth)</div>
+                <div class="mc-definition">Referrals + case studies generated per quarter.</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Success → referrals → prospects. Closes the demand loop.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">Referral leads don't convert better than cold leads.</div>
+                </div>
+            </div>
+            
+            <div class="metric-card strategic">
+                <div class="mc-header">
+                    <span class="mc-name">STRATEGIC REPOSITIONING</span>
+                    <span class="domain-tag strategic">Meta-Bet</span>
+                </div>
+                <div class="mc-value">Phase 1</div>
+                <div class="mc-label">The Rumelt Pivot</div>
+                <div class="mc-definition">Progress: "media buying agency" → "creative pipeline company"</div>
+                <div class="hypothesis-block">
+                    <div class="hypothesis-label">We believe</div>
+                    <div class="hypothesis-text">Pricing around media buying (commoditizing) while giving away creative (differentiator) is the core flaw.</div>
+                </div>
+                <div class="falsifier-block">
+                    <div class="falsifier-label">⊗ Falsified if</div>
+                    <div class="falsifier-text">0/3 test clients accept creative retainer pricing.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Influence Metrics -->
+        <div class="section-header">Influence Metrics <span>— What we control that affects inputs</span></div>
+        <div class="influence-section">
+            <div class="influence-grid">
+                <div class="influence-card">
+                    <div class="influence-card-header">Demand Generation</div>
+                    <div class="influence-list">
+                        <div class="influence-item">Content published per week</div>
+                        <div class="influence-item">Audit requests from content</div>
+                        <div class="influence-item">Case studies published</div>
+                        <div class="influence-item">Creative-first messaging adoption</div>
+                    </div>
+                </div>
+                <div class="influence-card">
+                    <div class="influence-card-header">Conversion Quality</div>
+                    <div class="influence-list">
+                        <div class="influence-item">Audit quality score (internal)</div>
+                        <div class="influence-item">Follow-up speed (hours)</div>
+                        <div class="influence-item">Proposal customization depth</div>
+                        <div class="influence-item">Decision-maker engagement %</div>
+                    </div>
+                </div>
+                <div class="influence-card">
+                    <div class="influence-card-header">Value Delivery</div>
+                    <div class="influence-list">
+                        <div class="influence-item">Campaign launch speed (days)</div>
+                        <div class="influence-item">Creatives tested in first 30 days</div>
+                        <div class="influence-item">Client communication cadence</div>
+                        <div class="influence-item">Cross-industry insights shared</div>
+                    </div>
+                </div>
+                <div class="influence-card">
+                    <div class="influence-card-header">Retention & Expansion</div>
+                    <div class="influence-list">
+                        <div class="influence-item">Proactive expansion conversations</div>
+                        <div class="influence-item">Pricing model transitions proposed</div>
+                        <div class="influence-item">Client NPS surveys</div>
+                        <div class="influence-item">At-risk client interventions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <strong>Every metric is a hypothesis, not a fact.</strong> When data contradicts belief, reality wins.
+            <em>"Growth comes from falsifying our own ideas faster than the market does." — Bratrax</em>
+        </div>
+    </div>
+</body>
+</html>

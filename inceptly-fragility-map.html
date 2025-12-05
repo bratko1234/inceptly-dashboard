@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inceptly | Fragility & Optionality Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f; --bg-secondary: #12121a; --bg-tertiary: #1a1a24; --bg-card: #16161f;
+            --border: #2a2a3a; --border-light: #3a3a4a;
+            --text-primary: #e8e8f0; --text-secondary: #a0a0b0; --text-muted: #707080;
+            --accent-blue: #4a9eff; --accent-purple: #9b7aff; --accent-amber: #f5a623;
+            --accent-red: #ff6b6b; --accent-green: #4ade80; --accent-cyan: #22d3ee;
+            --fragile: #ff6b6b; --fragile-bg: rgba(255, 107, 107, 0.08);
+            --robust: #f5a623; --robust-bg: rgba(245, 166, 35, 0.08);
+            --antifragile: #4ade80; --antifragile-bg: rgba(74, 222, 128, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'IBM Plex Sans', system-ui, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 40px 32px; }
+        
+        header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        h1 span { color: var(--accent-amber); }
+        .subtitle { font-size: 14px; color: var(--text-secondary); max-width: 700px; margin-bottom: 20px; }
+        
+        .legend { display: flex; gap: 24px; background: var(--bg-secondary); padding: 12px 20px; border-radius: 8px; margin-bottom: 24px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .legend-dot.fragile { background: var(--fragile); }
+        .legend-dot.robust { background: var(--robust); }
+        .legend-dot.antifragile { background: var(--antifragile); }
+        
+        .philosophy-note { background: var(--bg-tertiary); border-left: 3px solid var(--accent-amber); padding: 12px 16px; font-size: 13px; color: var(--text-secondary); margin-bottom: 32px; }
+        .philosophy-note em { color: var(--text-primary); font-style: normal; }
+        
+        .section-header { font-size: 16px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .section-header .tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+        .section-header .tag.fragile { background: var(--fragile-bg); color: var(--fragile); }
+        .section-header .tag.options { background: var(--antifragile-bg); color: var(--antifragile); }
+        
+        /* Fragility Grid */
+        .fragility-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        
+        .fragility-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; overflow: hidden; }
+        .fragility-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .fragility-card.critical::before { background: var(--fragile); }
+        .fragility-card.moderate::before { background: var(--robust); }
+        .fragility-card.low::before { background: var(--antifragile); }
+        
+        .fc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .fc-title { font-size: 14px; font-weight: 600; }
+        .fc-severity { font-size: 9px; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
+        .fc-severity.critical { background: var(--fragile-bg); color: var(--fragile); }
+        .fc-severity.moderate { background: var(--robust-bg); color: var(--robust); }
+        .fc-severity.low { background: var(--antifragile-bg); color: var(--antifragile); }
+        
+        .fc-description { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+        
+        .fc-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 12px; border-top: 1px solid var(--border); margin-bottom: 12px; }
+        .fc-metric { }
+        .fc-metric-label { font-size: 9px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+        .fc-metric-value { font-size: 16px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+        .fc-metric-value.bad { color: var(--fragile); }
+        .fc-metric-value.warning { color: var(--robust); }
+        .fc-metric-value.good { color: var(--antifragile); }
+        
+        .fc-impact { background: var(--bg-tertiary); padding: 10px 12px; border-radius: 6px; font-size: 11px; }
+        .fc-impact-label { color: var(--text-muted); margin-bottom: 4px; }
+        .fc-impact-text { color: var(--text-secondary); }
+        
+        /* Optionality Grid */
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        
+        .option-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .option-card.convex { border-left: 3px solid var(--antifragile); }
+        .option-card.linear { border-left: 3px solid var(--accent-blue); }
+        
+        .oc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .oc-title { font-size: 14px; font-weight: 600; }
+        .oc-type { font-size: 9px; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
+        .oc-type.convex { background: var(--antifragile-bg); color: var(--antifragile); }
+        .oc-type.linear { background: rgba(74, 158, 255, 0.15); color: var(--accent-blue); }
+        
+        .oc-input { font-size: 10px; color: var(--accent-cyan); margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+        .oc-description { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+        
+        .oc-economics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 12px; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 12px; }
+        .oc-econ-item { }
+        .oc-econ-label { font-size: 9px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+        .oc-econ-value { font-size: 13px; font-weight: 600; }
+        .oc-econ-value.downside { color: var(--antifragile); }
+        .oc-econ-value.upside { color: var(--accent-cyan); }
+        
+        .oc-falsifier { font-size: 11px; padding: 8px 12px; background: rgba(255, 107, 107, 0.05); border-left: 2px solid var(--fragile); }
+        .oc-falsifier-label { color: var(--fragile); font-weight: 600; margin-bottom: 2px; }
+        .oc-falsifier-text { color: var(--text-muted); }
+        
+        /* Barbell Visualization */
+        .barbell-section { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 40px; }
+        .barbell-header { text-align: center; margin-bottom: 24px; }
+        .barbell-header h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .barbell-header p { font-size: 12px; color: var(--text-muted); }
+        
+        .barbell-visual { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 24px; }
+        .barbell-weight { width: 200px; padding: 20px; border-radius: 8px; text-align: center; }
+        .barbell-weight.safe { background: var(--antifragile-bg); border: 1px solid var(--antifragile); }
+        .barbell-weight.risky { background: var(--fragile-bg); border: 1px solid var(--fragile); }
+        .barbell-weight h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+        .barbell-weight.safe h4 { color: var(--antifragile); }
+        .barbell-weight.risky h4 { color: var(--fragile); }
+        .barbell-weight p { font-size: 11px; color: var(--text-secondary); }
+        .barbell-bar { width: 200px; height: 8px; background: var(--bg-tertiary); }
+        .barbell-middle { width: 120px; padding: 12px; background: var(--bg-card); border: 1px dashed var(--border); border-radius: 6px; text-align: center; }
+        .barbell-middle h4 { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .barbell-middle p { font-size: 10px; color: var(--fragile); }
+        
+        .barbell-items { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .barbell-list h4 { font-size: 12px; font-weight: 600; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+        .barbell-list.safe h4 { color: var(--antifragile); }
+        .barbell-list.risky h4 { color: var(--accent-cyan); }
+        .barbell-list ul { list-style: none; }
+        .barbell-list li { font-size: 12px; color: var(--text-secondary); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        .barbell-list li:last-child { border-bottom: none; }
+        .barbell-list li span { color: var(--text-muted); font-size: 10px; }
+        
+        /* Concentration Risk */
+        .concentration-section { margin-bottom: 40px; }
+        .concentration-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        @media (max-width: 1000px) { .concentration-grid { grid-template-columns: 1fr; } }
+        
+        .concentration-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .cc-header { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; }
+        .cc-bar-container { margin-bottom: 16px; }
+        .cc-bar-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+        .cc-bar-label span:first-child { color: var(--text-secondary); }
+        .cc-bar-label span:last-child { color: var(--text-primary); font-weight: 600; font-family: 'IBM Plex Mono', monospace; }
+        .cc-bar { height: 8px; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden; }
+        .cc-bar-fill { height: 100%; border-radius: 4px; }
+        .cc-bar-fill.critical { background: var(--fragile); }
+        .cc-bar-fill.warning { background: var(--robust); }
+        .cc-bar-fill.ok { background: var(--antifragile); }
+        .cc-insight { font-size: 11px; color: var(--text-muted); padding-top: 12px; border-top: 1px solid var(--border); }
+        
+        .footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center; }
+        .footer em { display: block; margin-top: 8px; font-style: italic; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Inceptly <span>Fragility & Optionality Map</span></h1>
+            <div class="subtitle">Where does the business break? Where are the cheap bets with unlimited upside? Map fragility to reduce it. Map optionality to exploit it.</div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot fragile"></div>Fragile — breaks under stress</div>
+                <div class="legend-item"><div class="legend-dot robust"></div>Robust — survives stress</div>
+                <div class="legend-item"><div class="legend-dot antifragile"></div>Antifragile — gains from stress</div>
+            </div>
+        </header>
+        
+        <div class="philosophy-note">
+            <strong>Taleb Principle:</strong> <em>"Stability is fragility in disguise."</em> 
+            If a metric looks too smooth, assume hidden risk. Track where a single failure can cascade. Build systems that benefit from volatility.
+        </div>
+        
+        <!-- Barbell Strategy -->
+        <div class="barbell-section">
+            <div class="barbell-header">
+                <h3>The Inceptly Barbell</h3>
+                <p>Safety on one side, asymmetric bets on the other. Avoid the middle.</p>
+            </div>
+            
+            <div class="barbell-visual">
+                <div class="barbell-weight safe">
+                    <h4>Safe Side (80%)</h4>
+                    <p>Protect the base. Cash flow, existing clients, proven processes.</p>
+                </div>
+                <div class="barbell-bar"></div>
+                <div class="barbell-middle">
+                    <h4>The Middle</h4>
+                    <p>Avoid: Medium risk, medium reward</p>
+                </div>
+                <div class="barbell-bar"></div>
+                <div class="barbell-weight risky">
+                    <h4>Risky Side (20%)</h4>
+                    <p>Convex bets. Small downside, unlimited upside.</p>
+                </div>
+            </div>
+            
+            <div class="barbell-items">
+                <div class="barbell-list safe">
+                    <h4>Safe Side — Protect These</h4>
+                    <ul>
+                        <li>Existing ROI-positive clients <span>Core revenue</span></li>
+                        <li>Audit conversion process <span>35%+ rate</span></li>
+                        <li>YouTube/Google expertise <span>Table stakes</span></li>
+                        <li>Client communication cadence <span>Trust builder</span></li>
+                        <li>Cash reserves <span>Runway</span></li>
+                    </ul>
+                </div>
+                <div class="barbell-list risky">
+                    <h4>Risky Side — Bet on These</h4>
+                    <ul>
+                        <li>Creative retainer model test <span>Business model</span></li>
+                        <li>Content-led demand generation <span>One viral piece</span></li>
+                        <li>Cross-industry pattern library <span>Unique IP</span></li>
+                        <li>New vertical expansion <span>Info products</span></li>
+                        <li>Strategic partnerships <span>Distribution</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fragility Points -->
+        <div class="section-header">Fragility Points <span class="tag fragile">Where We Break</span></div>
+        <div class="fragility-grid">
+            <div class="fragility-card critical">
+                <div class="fc-header">
+                    <span class="fc-title">Single-Channel Demand Dependency</span>
+                    <span class="fc-severity critical">Critical</span>
+                </div>
+                <div class="fc-description">~70% of qualified prospects come from a single source (referrals + direct outreach). If that channel dries up, pipeline collapses.</div>
+                <div class="fc-metrics">
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Channel Concentration</div>
+                        <div class="fc-metric-value bad">70%</div>
+                    </div>
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Content-Sourced</div>
+                        <div class="fc-metric-value warning">18%</div>
+                    </div>
+                </div>
+                <div class="fc-impact">
+                    <div class="fc-impact-label">If this breaks:</div>
+                    <div class="fc-impact-text">Pipeline goes to zero within 60 days. No new clients. Revenue decline starts Q+2.</div>
+                </div>
+            </div>
+            
+            <div class="fragility-card critical">
+                <div class="fc-header">
+                    <span class="fc-title">ROI Measurement Unreliability</span>
+                    <span class="fc-severity critical">Critical</span>
+                </div>
+                <div class="fc-description">~40% of clients have unreliable ROI attribution. Can't prove value = can't retain = can't expand.</div>
+                <div class="fc-metrics">
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Reliable Attribution</div>
+                        <div class="fc-metric-value bad">60%</div>
+                    </div>
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">North Star Impact</div>
+                        <div class="fc-metric-value bad">Broken</div>
+                    </div>
+                </div>
+                <div class="fc-impact">
+                    <div class="fc-impact-label">If this breaks:</div>
+                    <div class="fc-impact-text">Cannot demonstrate value to 40% of clients. Churn increases. Expansion conversations fail.</div>
+                </div>
+            </div>
+            
+            <div class="fragility-card critical">
+                <div class="fc-header">
+                    <span class="fc-title">Pricing Model Vulnerability</span>
+                    <span class="fc-severity critical">Critical</span>
+                </div>
+                <div class="fc-description">85% of clients on ad spend % model. As budgets scale, fees become "too expensive" — clients move in-house.</div>
+                <div class="fc-metrics">
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">% on Traditional Model</div>
+                        <div class="fc-metric-value bad">85%</div>
+                    </div>
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Avg Client Lifetime</div>
+                        <div class="fc-metric-value warning">14 mo</div>
+                    </div>
+                </div>
+                <div class="fc-impact">
+                    <div class="fc-impact-label">If this breaks:</div>
+                    <div class="fc-impact-text">Every successful client eventually churns. Growth becomes a treadmill. LTV capped.</div>
+                </div>
+            </div>
+            
+            <div class="fragility-card moderate">
+                <div class="fc-header">
+                    <span class="fc-title">Creative Capacity Constraint</span>
+                    <span class="fc-severity moderate">Moderate</span>
+                </div>
+                <div class="fc-description">Creative pipeline health declining 4 weeks straight. If creative velocity falls, differentiation disappears.</div>
+                <div class="fc-metrics">
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Concepts/Client/Month</div>
+                        <div class="fc-metric-value warning">2.3</div>
+                    </div>
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Trend</div>
+                        <div class="fc-metric-value bad">↓ 4 weeks</div>
+                    </div>
+                </div>
+                <div class="fc-impact">
+                    <div class="fc-impact-label">If this breaks:</div>
+                    <div class="fc-impact-text">Can't deliver on "creative pipeline" positioning. Repositioning fails. Back to commodity media buying.</div>
+                </div>
+            </div>
+            
+            <div class="fragility-card moderate">
+                <div class="fc-header">
+                    <span class="fc-title">Key Person Dependency</span>
+                    <span class="fc-severity moderate">Moderate</span>
+                </div>
+                <div class="fc-description">Critical knowledge concentrated in 2-3 people. If they leave, client relationships and institutional knowledge go with them.</div>
+                <div class="fc-metrics">
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Key Person Risk</div>
+                        <div class="fc-metric-value warning">High</div>
+                    </div>
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Documentation Level</div>
+                        <div class="fc-metric-value warning">Low</div>
+                    </div>
+                </div>
+                <div class="fc-impact">
+                    <div class="fc-impact-label">If this breaks:</div>
+                    <div class="fc-impact-text">Client relationships disrupted. Process knowledge lost. 3-6 month recovery.</div>
+                </div>
+            </div>
+            
+            <div class="fragility-card low">
+                <div class="fc-header">
+                    <span class="fc-title">Platform Dependency (YouTube/Google)</span>
+                    <span class="fc-severity low">Low Risk</span>
+                </div>
+                <div class="fc-description">100% of media buying on Google properties. Platform risk exists but is shared with entire industry.</div>
+                <div class="fc-metrics">
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Platform Concentration</div>
+                        <div class="fc-metric-value warning">100%</div>
+                    </div>
+                    <div class="fc-metric">
+                        <div class="fc-metric-label">Industry Shared Risk</div>
+                        <div class="fc-metric-value good">Yes</div>
+                    </div>
+                </div>
+                <div class="fc-impact">
+                    <div class="fc-impact-label">If this breaks:</div>
+                    <div class="fc-impact-text">Entire industry affected. Not competitive disadvantage. Diversification possible but not urgent.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Concentration Risk -->
+        <div class="concentration-section">
+            <div class="section-header">Concentration Risk Analysis</div>
+            <div class="concentration-grid">
+                <div class="concentration-card">
+                    <div class="cc-header">Revenue Concentration</div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Top 3 clients</span><span>45%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill warning" style="width: 45%;"></div></div>
+                    </div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Top 5 clients</span><span>62%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill critical" style="width: 62%;"></div></div>
+                    </div>
+                    <div class="cc-insight">⚠️ Losing top 2 clients = 30% revenue hit. Diversify client base.</div>
+                </div>
+                
+                <div class="concentration-card">
+                    <div class="cc-header">Demand Source Concentration</div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Referrals</span><span>45%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill warning" style="width: 45%;"></div></div>
+                    </div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Direct/Outreach</span><span>37%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill warning" style="width: 37%;"></div></div>
+                    </div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Content/Inbound</span><span>18%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill ok" style="width: 18%;"></div></div>
+                    </div>
+                    <div class="cc-insight">⚠️ Content growing but still small. Invest to diversify demand.</div>
+                </div>
+                
+                <div class="concentration-card">
+                    <div class="cc-header">Pricing Model Concentration</div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Ad Spend % (vulnerable)</span><span>85%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill critical" style="width: 85%;"></div></div>
+                    </div>
+                    <div class="cc-bar-container">
+                        <div class="cc-bar-label"><span>Creative Retainer (new)</span><span>15%</span></div>
+                        <div class="cc-bar"><div class="cc-bar-fill ok" style="width: 15%;"></div></div>
+                    </div>
+                    <div class="cc-insight">🎯 Core strategic bet: migrate to creative retainer model.</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Optionality -->
+        <div class="section-header">Optionality Map <span class="tag options">Cheap Bets, Big Upside</span></div>
+        <div class="options-grid">
+            <div class="option-card convex">
+                <div class="oc-header">
+                    <span class="oc-title">Creative Retainer Model</span>
+                    <span class="oc-type convex">Convex Bet</span>
+                </div>
+                <div class="oc-input">→ Affects: Pricing Model Innovation, Expansion Rate, Retention</div>
+                <div class="oc-description">Test decoupled pricing: fixed creative retainer + separate media buying fee. If it works, transforms entire business model.</div>
+                <div class="oc-economics">
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Downside (capped)</div>
+                        <div class="oc-econ-value downside">~$15K/quarter</div>
+                    </div>
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Upside (uncapped)</div>
+                        <div class="oc-econ-value upside">Business model shift</div>
+                    </div>
+                </div>
+                <div class="oc-falsifier">
+                    <div class="oc-falsifier-label">⊗ Kill if:</div>
+                    <div class="oc-falsifier-text">0/3 test clients accept. Then market doesn't value creative separately.</div>
+                </div>
+            </div>
+            
+            <div class="option-card convex">
+                <div class="oc-header">
+                    <span class="oc-title">Content-Led Demand Generation</span>
+                    <span class="oc-type convex">Convex Bet</span>
+                </div>
+                <div class="oc-input">→ Affects: Qualified Prospect Pipeline, Referrals</div>
+                <div class="oc-description">Thought leadership positioning Inceptly as "creative pipeline experts." One viral piece can shift market perception overnight.</div>
+                <div class="oc-economics">
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Downside (capped)</div>
+                        <div class="oc-econ-value downside">~10 hrs/week</div>
+                    </div>
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Upside (uncapped)</div>
+                        <div class="oc-econ-value upside">Market positioning</div>
+                    </div>
+                </div>
+                <div class="oc-falsifier">
+                    <div class="oc-falsifier-label">⊗ Kill if:</div>
+                    <div class="oc-falsifier-text">0 qualified leads from content after 6 months.</div>
+                </div>
+            </div>
+            
+            <div class="option-card convex">
+                <div class="oc-header">
+                    <span class="oc-title">Cross-Industry Pattern Library</span>
+                    <span class="oc-type convex">Convex Bet</span>
+                </div>
+                <div class="oc-input">→ Affects: Creative Pipeline Health, Differentiation</div>
+                <div class="oc-description">Systematize creative patterns from all verticals. Becomes proprietary IP that can't be replicated.</div>
+                <div class="oc-economics">
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Downside (capped)</div>
+                        <div class="oc-econ-value downside">~40 hrs to build</div>
+                    </div>
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Upside (uncapped)</div>
+                        <div class="oc-econ-value upside">Unique IP moat</div>
+                    </div>
+                </div>
+                <div class="oc-falsifier">
+                    <div class="oc-falsifier-label">⊗ Kill if:</div>
+                    <div class="oc-falsifier-text">Patterns don't transfer across industries (each vertical is unique).</div>
+                </div>
+            </div>
+            
+            <div class="option-card linear">
+                <div class="oc-header">
+                    <span class="oc-title">ROI Measurement Standardization</span>
+                    <span class="oc-type linear">Linear Investment</span>
+                </div>
+                <div class="oc-input">→ Affects: Time-to-First-ROI, North Star reliability</div>
+                <div class="oc-description">Implement standardized tracking across clients. Not convex but necessary — fixes foundational measurement gap.</div>
+                <div class="oc-economics">
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Investment</div>
+                        <div class="oc-econ-value">~$2K/mo + setup</div>
+                    </div>
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Return</div>
+                        <div class="oc-econ-value">Measurement reliability</div>
+                    </div>
+                </div>
+                <div class="oc-falsifier">
+                    <div class="oc-falsifier-label">⊗ Kill if:</div>
+                    <div class="oc-falsifier-text">Clients refuse to implement tracking (then find different clients).</div>
+                </div>
+            </div>
+            
+            <div class="option-card linear">
+                <div class="oc-header">
+                    <span class="oc-title">Expansion Playbook</span>
+                    <span class="oc-type linear">Linear Investment</span>
+                </div>
+                <div class="oc-input">→ Affects: Expansion Rate, Client LTV</div>
+                <div class="oc-description">Systematic playbook for expansion conversations at ROI milestones. Predictable return on effort.</div>
+                <div class="oc-economics">
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Investment</div>
+                        <div class="oc-econ-value">~20 hrs to build</div>
+                    </div>
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Return</div>
+                        <div class="oc-econ-value">+10-15% expansion rate</div>
+                    </div>
+                </div>
+                <div class="oc-falsifier">
+                    <div class="oc-falsifier-label">⊗ Kill if:</div>
+                    <div class="oc-falsifier-text">Expansion rate doesn't improve after 2 quarters.</div>
+                </div>
+            </div>
+            
+            <div class="option-card convex">
+                <div class="oc-header">
+                    <span class="oc-title">Strategic Partnership (Vidtao)</span>
+                    <span class="oc-type convex">Convex Bet</span>
+                </div>
+                <div class="oc-input">→ Affects: Qualified Prospect Pipeline, Positioning</div>
+                <div class="oc-description">Leverage Vidtao audience for demand generation. Built-in distribution to exact ICP.</div>
+                <div class="oc-economics">
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Downside (capped)</div>
+                        <div class="oc-econ-value downside">Time investment</div>
+                    </div>
+                    <div class="oc-econ-item">
+                        <div class="oc-econ-label">Upside (uncapped)</div>
+                        <div class="oc-econ-value upside">Distribution moat</div>
+                    </div>
+                </div>
+                <div class="oc-falsifier">
+                    <div class="oc-falsifier-label">⊗ Kill if:</div>
+                    <div class="oc-falsifier-text">Vidtao audience doesn't convert to Inceptly clients.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <strong>Fragility is hidden until it isn't.</strong> Map it before it maps you. Build options before you need them.
+            <em>"Predictability is fragile. Optionality is strength." — Bratrax</em>
+        </div>
+    </div>
+</body>
+</html>
