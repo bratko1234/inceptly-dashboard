@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Signal Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo"><h1><div class="logo-icon">C</div>COD Dashboard</h1></div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><span class="nav-icon">◉</span>Overview</a>
+            <a href="ontology.html" class="nav-item"><span class="nav-icon">◇</span>Ontology</a>
+            <a href="allocations.html" class="nav-item"><span class="nav-icon">⊞</span>Allocations</a>
+            <a href="clients.html" class="nav-item"><span class="nav-icon">◈</span>Clients</a>
+            <a href="campaigns.html" class="nav-item"><span class="nav-icon">▶</span>Campaigns</a>
+            <a href="leads.html" class="nav-item"><span class="nav-icon">⟁</span>Leads</a>
+            <a href="signals.html" class="nav-item active"><span class="nav-icon">⚡</span>Signals</a>
+        </nav>
+        <div class="sidebar-footer">Built on Bratrax Principles</div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div>
+                <h1>Signal Detection</h1>
+                <p class="header-subtitle">Budget alerts, profitability warnings, campaign anomalies — What needs attention now?</p>
+            </div>
+        </header>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Active Signals</div>
+                <div class="summary-value">6</div>
+                <div class="summary-subtext">Requiring attention</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Critical</div>
+                <div class="summary-value" style="color: var(--low);">2</div>
+                <div class="summary-subtext">Immediate action</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Warning</div>
+                <div class="summary-value" style="color: var(--medium);">3</div>
+                <div class="summary-subtext">Monitor closely</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Opportunity</div>
+                <div class="summary-value" style="color: var(--high);">1</div>
+                <div class="summary-subtext">Positive signal</div>
+            </div>
+        </div>
+
+        <div style="padding: 24px;">
+            <h3 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 16px;">⚠️ Critical Signals</h3>
+            
+            <div class="signal-item critical">
+                <div class="signal-title">KARNS-189-META-TX approaching budget exhaustion</div>
+                <div class="signal-description">
+                    92% of allocation spent ($64,400 of $70,000). At current daily spend rate of $2,100, will exhaust in <strong>2.7 days</strong>. 
+                    Client payment cycle suggests next payment not expected for 7 days. Risk of campaign pause and momentum loss.
+                </div>
+                <div class="signal-meta">
+                    <span>Client: Karns & Karns</span>
+                    <span>Type: Retainer</span>
+                    <span>Severity: Critical</span>
+                    <span>Detected: 2h ago</span>
+                </div>
+            </div>
+
+            <div class="signal-item critical">
+                <div class="signal-title">PPL-META-FL operating at loss for 72 hours</div>
+                <div class="signal-description">
+                    Current CPA: $168. Sale price: $150. Running at <strong>-$18 loss per lead</strong> (-12% margin). 
+                    Last profitable on Dec 9. 47 leads sold at loss = $846 negative margin. Creative fatigue suspected — CTR down 34% vs last week.
+                </div>
+                <div class="signal-meta">
+                    <span>Channel: Meta</span>
+                    <span>Type: PPL</span>
+                    <span>Severity: Critical</span>
+                    <span>Detected: 6h ago</span>
+                </div>
+            </div>
+
+            <h3 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 24px 0 16px;">⚡ Warning Signals</h3>
+
+            <div class="signal-item">
+                <div class="signal-title">STEIN-2-META-FL budget at 86%</div>
+                <div class="signal-description">
+                    $137,000 of $160,000 spent. At current pace, will exhaust in 8 days. CPL performing well at $118 (target: $130).
+                    Consider proactive outreach for budget top-up to maintain momentum.
+                </div>
+                <div class="signal-meta">
+                    <span>Client: Steinger Law</span>
+                    <span>Type: Retainer</span>
+                    <span>Severity: Warning</span>
+                    <span>Detected: 1d ago</span>
+                </div>
+            </div>
+
+            <div class="signal-item">
+                <div class="signal-title">5 campaigns running without allocation links</div>
+                <div class="signal-description">
+                    Campaigns not following naming convention cannot be tracked against allocations. 
+                    Spend is being recorded but budget control is compromised. Campaigns: MVA_Texas_December_Test, FL_Retarget_NewAudience, CA_Lookalike_Test2, and 2 others.
+                </div>
+                <div class="signal-meta">
+                    <span>Type: Data Quality</span>
+                    <span>Severity: Warning</span>
+                    <span>Detected: 3d ago</span>
+                </div>
+            </div>
+
+            <div class="signal-item">
+                <div class="signal-title">AWAD-31-META-CANY CPL 16% above target</div>
+                <div class="signal-description">
+                    Current CPL: $162. Target: $140. Trending in wrong direction — was $148 last week.
+                    Multi-state allocation making optimization difficult. Consider splitting into single-state allocations.
+                </div>
+                <div class="signal-meta">
+                    <span>Client: CEO Lawyer</span>
+                    <span>Type: Retainer</span>
+                    <span>Severity: Warning</span>
+                    <span>Detected: 2d ago</span>
+                </div>
+            </div>
+
+            <h3 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 24px 0 16px;">✓ Opportunity Signals</h3>
+
+            <div class="signal-item success">
+                <div class="signal-title">STEIN-2-GOOG-AZ outperforming by 23%</div>
+                <div class="signal-description">
+                    CPL: $108 vs $140 target. Lead volume up 45% week-over-week. Google Search brand campaign driving high-intent traffic.
+                    <strong>Recommendation:</strong> Request budget increase from client. Current allocation only $14K — high opportunity cost.
+                </div>
+                <div class="signal-meta">
+                    <span>Client: Steinger Law</span>
+                    <span>Type: Retainer</span>
+                    <span>Severity: Opportunity</span>
+                    <span>Detected: 1d ago</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <strong>Bratrax Principles:</strong> Signals are hypotheses about what's breaking. Each requires validation before action. 
+            False positives are expected — the goal is early detection, not perfect prediction.
+        </footer>
+    </main>
+</body>
+</html>

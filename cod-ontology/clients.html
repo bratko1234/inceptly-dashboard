@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Clients</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-primary: #0a0a0b; --bg-secondary: #111113; --bg-tertiary: #18181b; --bg-card: #141416; --border: #27272a; --text-primary: #fafafa; --text-secondary: #a1a1aa; --text-muted: #71717a; --retainer: #3b82f6; --retainer-dim: rgba(59, 130, 246, 0.1); --ppl: #f59e0b; --ppl-dim: rgba(245, 158, 11, 0.1); --high: #22c55e; --shared: #a855f7; --shared-dim: rgba(168, 85, 247, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'JetBrains Mono', monospace; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; font-size: 11px; }
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 200px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 20px 0; }
+        .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .sidebar-logo h1 { font-family: 'Newsreader', serif; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .logo-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--retainer), var(--ppl)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 11px; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-item.active { background: var(--retainer-dim); color: var(--retainer); }
+        .nav-icon { font-size: 14px; width: 20px; text-align: center; }
+        .main-content { margin-left: 200px; }
+        .header { padding: 20px 24px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+        .header h1 { font-family: 'Newsreader', serif; font-size: 20px; margin-bottom: 4px; }
+        .header-subtitle { font-size: 11px; color: var(--text-muted); }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px; border-bottom: 1px solid var(--border); }
+        .summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .summary-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .summary-value { font-family: 'Newsreader', serif; font-size: 28px; }
+        .summary-subtext { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 24px; }
+        .client-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; position: relative; }
+        .client-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 8px 8px 0 0; }
+        .client-card.retainer::before { background: var(--retainer); }
+        .client-card.ppl::before { background: var(--ppl); }
+        .client-card.both::before { background: linear-gradient(90deg, var(--retainer), var(--ppl)); }
+        .client-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .client-name { font-family: 'Newsreader', serif; font-size: 16px; font-weight: 500; }
+        .client-firm { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .client-type { font-size: 8px; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+        .client-type.retainer { background: var(--retainer-dim); color: var(--retainer); }
+        .client-type.ppl { background: var(--ppl-dim); color: var(--ppl); }
+        .client-type.both { background: var(--shared-dim); color: var(--shared); }
+        .client-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-family: 'Newsreader', serif; font-size: 16px; }
+        .bid-badge { font-size: 10px; color: var(--text-muted); background: var(--bg-tertiary); padding: 4px 8px; border-radius: 4px; margin-top: 12px; display: inline-block; }
+        .footer { padding: 16px 24px; background: var(--bg-secondary); border-top: 1px solid var(--border); font-size: 10px; color: var(--text-muted); text-align: center; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo"><h1><div class="logo-icon">C</div>COD Dashboard</h1></div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><span class="nav-icon">◉</span>Overview</a>
+            <a href="ontology.html" class="nav-item"><span class="nav-icon">◇</span>Ontology</a>
+            <a href="allocations.html" class="nav-item"><span class="nav-icon">⊞</span>Allocations</a>
+            <a href="clients.html" class="nav-item active"><span class="nav-icon">◈</span>Clients</a>
+            <a href="campaigns.html" class="nav-item"><span class="nav-icon">▶</span>Campaigns</a>
+            <a href="leads.html" class="nav-item"><span class="nav-icon">⟁</span>Leads</a>
+            <a href="signals.html" class="nav-item"><span class="nav-icon">⚡</span>Signals</a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="header"><div><h1>Client Overview</h1><p class="header-subtitle">Law firms and buyers — Retainer clients, PPL buyers, or both</p></div></header>
+        <div class="summary-grid">
+            <div class="summary-card"><div class="summary-label">Total Clients</div><div class="summary-value">28</div><div class="summary-subtext">Active relationships</div></div>
+            <div class="summary-card"><div class="summary-label">Retainer</div><div class="summary-value" style="color: var(--retainer);">23</div><div class="summary-subtext">Pay upfront</div></div>
+            <div class="summary-card"><div class="summary-label">PPL Buyers</div><div class="summary-value" style="color: var(--ppl);">8</div><div class="summary-subtext">Purchase leads</div></div>
+            <div class="summary-card"><div class="summary-label">Both</div><div class="summary-value" style="color: var(--shared);">3</div><div class="summary-subtext">Retainer + PPL</div></div>
+        </div>
+        <div class="cards-grid">
+            <div class="client-card retainer">
+                <div class="client-header"><div><div class="client-name">Roland Perez</div><div class="client-firm">Karns & Karns</div></div><span class="client-type retainer">Retainer</span></div>
+                <div class="client-stats"><div><div class="stat-label">Total Budget</div><div class="stat-value">$939K</div></div><div><div class="stat-label">Leads (MTD)</div><div class="stat-value">1,248</div></div><div><div class="stat-label">Allocations</div><div class="stat-value">4</div></div><div><div class="stat-label">Avg CPL</div><div class="stat-value">$138</div></div></div>
+                <div class="bid-badge">BID: 189</div>
+            </div>
+            <div class="client-card retainer">
+                <div class="client-header"><div><div class="client-name">Michael Steinger</div><div class="client-firm">Steinger, Greene & Feiner</div></div><span class="client-type retainer">Retainer</span></div>
+                <div class="client-stats"><div><div class="stat-label">Total Budget</div><div class="stat-value">$434K</div></div><div><div class="stat-label">Leads (MTD)</div><div class="stat-value">892</div></div><div><div class="stat-label">Allocations</div><div class="stat-value">5</div></div><div><div class="stat-label">Avg CPL</div><div class="stat-value">$112</div></div></div>
+                <div class="bid-badge">BID: 2</div>
+            </div>
+            <div class="client-card both">
+                <div class="client-header"><div><div class="client-name">Kelsey Allen</div><div class="client-firm">Bush & Bush Law Group</div></div><span class="client-type both">Both</span></div>
+                <div class="client-stats"><div><div class="stat-label">Retainer</div><div class="stat-value">$45K</div></div><div><div class="stat-label">PPL Bought</div><div class="stat-value">$78K</div></div><div><div class="stat-label">Allocations</div><div class="stat-value">2</div></div><div><div class="stat-label">Leads</div><div class="stat-value">520</div></div></div>
+                <div class="bid-badge">BID: 169</div>
+            </div>
+            <div class="client-card ppl">
+                <div class="client-header"><div><div class="client-name">Texas Injury Network</div><div class="client-firm">Lead Aggregator</div></div><span class="client-type ppl">PPL Buyer</span></div>
+                <div class="client-stats"><div><div class="stat-label">Total Purchased</div><div class="stat-value">$156K</div></div><div><div class="stat-label">Leads Bought</div><div class="stat-value">1,040</div></div><div><div class="stat-label">Avg Price</div><div class="stat-value">$150</div></div><div><div class="stat-label">Last Payment</div><div class="stat-value">Dec 8</div></div></div>
+                <div class="bid-badge">BID: 445</div>
+            </div>
+            <div class="client-card retainer">
+                <div class="client-header"><div><div class="client-name">Ali Awad</div><div class="client-firm">CEO Lawyer</div></div><span class="client-type retainer">Retainer</span></div>
+                <div class="client-stats"><div><div class="stat-label">Total Budget</div><div class="stat-value">$174K</div></div><div><div class="stat-label">Leads (MTD)</div><div class="stat-value">356</div></div><div><div class="stat-label">Allocations</div><div class="stat-value">3</div></div><div><div class="stat-label">Avg CPL</div><div class="stat-value">$158</div></div></div>
+                <div class="bid-badge">BID: 31</div>
+            </div>
+            <div class="client-card retainer">
+                <div class="client-header"><div><div class="client-name">Tyler Wilk</div><div class="client-firm">Wilk Law Firm</div></div><span class="client-type retainer">Retainer</span></div>
+                <div class="client-stats"><div><div class="stat-label">Total Budget</div><div class="stat-value">$118K</div></div><div><div class="stat-label">Leads (MTD)</div><div class="stat-value">234</div></div><div><div class="stat-label">Allocations</div><div class="stat-value">2</div></div><div><div class="stat-label">Avg CPL</div><div class="stat-value">$128</div></div></div>
+                <div class="bid-badge">BID: 20</div>
+            </div>
+        </div>
+        <footer class="footer"><strong>Note:</strong> Simulated data based on ontology.</footer>
+    </main>
+</body>
+</html>

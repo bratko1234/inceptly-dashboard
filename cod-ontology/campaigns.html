@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Campaigns</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-primary: #0a0a0b; --bg-secondary: #111113; --bg-tertiary: #18181b; --bg-card: #141416; --border: #27272a; --text-primary: #fafafa; --text-secondary: #a1a1aa; --text-muted: #71717a; --retainer: #3b82f6; --retainer-dim: rgba(59, 130, 246, 0.1); --ppl: #f59e0b; --ppl-dim: rgba(245, 158, 11, 0.1); --high: #22c55e; --high-dim: rgba(34, 197, 94, 0.1); --low: #ef4444; --low-dim: rgba(239, 68, 68, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'JetBrains Mono', monospace; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; font-size: 11px; }
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 200px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 20px 0; }
+        .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .sidebar-logo h1 { font-family: 'Newsreader', serif; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .logo-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--retainer), var(--ppl)); border-radius: 6px; }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 11px; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-item.active { background: var(--retainer-dim); color: var(--retainer); }
+        .nav-icon { font-size: 14px; width: 20px; text-align: center; }
+        .main-content { margin-left: 200px; }
+        .header { padding: 20px 24px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+        .header h1 { font-family: 'Newsreader', serif; font-size: 20px; margin-bottom: 4px; }
+        .header-subtitle { font-size: 11px; color: var(--text-muted); }
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding: 24px; border-bottom: 1px solid var(--border); }
+        .summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .summary-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .summary-value { font-family: 'Newsreader', serif; font-size: 24px; }
+        .summary-subtext { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+        .table-container { padding: 24px; }
+        .campaign-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
+        .campaign-table th, .campaign-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        .campaign-table th { font-size: 9px; text-transform: uppercase; color: var(--text-muted); background: var(--bg-tertiary); }
+        .campaign-table td { font-size: 11px; }
+        .campaign-table tbody tr:hover { background: var(--bg-tertiary); }
+        .campaign-name { font-size: 10px; font-family: 'JetBrains Mono', monospace; }
+        .type-badge { font-size: 8px; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+        .type-badge.retainer { background: var(--retainer-dim); color: var(--retainer); }
+        .type-badge.ppl { background: var(--ppl-dim); color: var(--ppl); }
+        .platform-badge { font-size: 9px; padding: 3px 8px; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .status-dot.active { background: var(--high); }
+        .status-dot.paused { background: var(--text-muted); }
+        .metric-value { font-family: 'Newsreader', serif; font-size: 13px; }
+        .metric-value.good { color: var(--high); }
+        .metric-value.bad { color: var(--low); }
+        .allocation-link { font-size: 9px; color: var(--retainer); background: var(--retainer-dim); padding: 3px 6px; border-radius: 4px; }
+        .unlinked { font-size: 9px; color: var(--low); background: var(--low-dim); padding: 3px 6px; border-radius: 4px; }
+        .footer { padding: 16px 24px; background: var(--bg-secondary); border-top: 1px solid var(--border); font-size: 10px; color: var(--text-muted); text-align: center; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo"><h1><div class="logo-icon">C</div>COD Dashboard</h1></div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><span class="nav-icon">◉</span>Overview</a>
+            <a href="ontology.html" class="nav-item"><span class="nav-icon">◇</span>Ontology</a>
+            <a href="allocations.html" class="nav-item"><span class="nav-icon">⊞</span>Allocations</a>
+            <a href="clients.html" class="nav-item"><span class="nav-icon">◈</span>Clients</a>
+            <a href="campaigns.html" class="nav-item active"><span class="nav-icon">▶</span>Campaigns</a>
+            <a href="leads.html" class="nav-item"><span class="nav-icon">⟁</span>Leads</a>
+            <a href="signals.html" class="nav-item"><span class="nav-icon">⚡</span>Signals</a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="header"><div><h1>Campaign Monitor</h1><p class="header-subtitle">Platform campaigns by type — Retainer linked to allocations, PPL tracked for profitability</p></div></header>
+        <div class="summary-grid">
+            <div class="summary-card"><div class="summary-label">Active Campaigns</div><div class="summary-value">89</div><div class="summary-subtext">Running now</div></div>
+            <div class="summary-card"><div class="summary-label">Retainer</div><div class="summary-value" style="color: var(--retainer);">67</div><div class="summary-subtext">With allocations</div></div>
+            <div class="summary-card"><div class="summary-label">PPL</div><div class="summary-value" style="color: var(--ppl);">22</div><div class="summary-subtext">Agency funded</div></div>
+            <div class="summary-card"><div class="summary-label">Unlinked</div><div class="summary-value" style="color: var(--low);">5</div><div class="summary-subtext">Missing allocation</div></div>
+            <div class="summary-card"><div class="summary-label">Today Spend</div><div class="summary-value">$18.4K</div><div class="summary-subtext">All campaigns</div></div>
+        </div>
+        <div class="table-container">
+            <table class="campaign-table">
+                <thead><tr><th>Campaign Name</th><th>Type</th><th>Platform</th><th>Allocation</th><th>Status</th><th>Spend (7d)</th><th>Leads</th><th>CPL</th></tr></thead>
+                <tbody>
+                    <tr><td class="campaign-name">KARNS-189-META-TX_conversions_v3</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Meta</span></td><td><span class="allocation-link">KARNS-189-META-TX</span></td><td><span class="status-dot active"></span>Active</td><td>$8,450</td><td>52</td><td class="metric-value bad">$163</td></tr>
+                    <tr><td class="campaign-name">KARNS-189-META-CA_lookalike_v2</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Meta</span></td><td><span class="allocation-link">KARNS-189-META-CA</span></td><td><span class="status-dot active"></span>Active</td><td>$12,800</td><td>102</td><td class="metric-value good">$125</td></tr>
+                    <tr><td class="campaign-name">STEIN-2-META-FL_retarget_v1</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Meta</span></td><td><span class="allocation-link">STEIN-2-META-FL</span></td><td><span class="status-dot active"></span>Active</td><td>$9,200</td><td>84</td><td class="metric-value good">$110</td></tr>
+                    <tr><td class="campaign-name">PPL-META-TX_conversions_v1</td><td><span class="type-badge ppl">PPL</span></td><td><span class="platform-badge">Meta</span></td><td>—</td><td><span class="status-dot active"></span>Active</td><td>$14,500</td><td>89</td><td class="metric-value good">$163</td></tr>
+                    <tr><td class="campaign-name">PPL-META-FL_broad_v2</td><td><span class="type-badge ppl">PPL</span></td><td><span class="platform-badge">Meta</span></td><td>—</td><td><span class="status-dot active"></span>Active</td><td>$11,200</td><td>68</td><td class="metric-value bad">$165</td></tr>
+                    <tr><td class="campaign-name">AWAD-31-META-TX_awareness</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Meta</span></td><td><span class="allocation-link">AWAD-31-META-CANY</span></td><td><span class="status-dot active"></span>Active</td><td>$5,600</td><td>34</td><td class="metric-value bad">$165</td></tr>
+                    <tr><td class="campaign-name">MVA_Texas_December_Test</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Meta</span></td><td><span class="unlinked">UNLINKED</span></td><td><span class="status-dot active"></span>Active</td><td>$3,200</td><td>18</td><td>$178</td></tr>
+                    <tr><td class="campaign-name">STEIN-2-GOOG-AZ_search_brand</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Google</span></td><td><span class="allocation-link">STEIN-2-GOOG-AZ</span></td><td><span class="status-dot active"></span>Active</td><td>$2,100</td><td>24</td><td class="metric-value good">$88</td></tr>
+                    <tr><td class="campaign-name">KARNS-189-META-TX_conversions_v2</td><td><span class="type-badge retainer">RET</span></td><td><span class="platform-badge">Meta</span></td><td><span class="allocation-link">KARNS-189-META-TX</span></td><td><span class="status-dot paused"></span>Paused</td><td>$0</td><td>0</td><td>—</td></tr>
+                    <tr><td class="campaign-name">PPL-GOOG-CA_search_mva</td><td><span class="type-badge ppl">PPL</span></td><td><span class="platform-badge">Google</span></td><td>—</td><td><span class="status-dot active"></span>Active</td><td>$4,800</td><td>52</td><td class="metric-value good">$92</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <footer class="footer"><strong>Note:</strong> Simulated data. Naming convention: {ALLOCATION_ID}_{description} for Retainer, PPL-{CHANNEL}-{GEO}_{description} for PPL.</footer>
+    </main>
+</body>
+</html>

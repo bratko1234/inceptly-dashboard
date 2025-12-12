@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Strategic Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --bg-card: #141416;
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            /* Status colors */
+            --retainer: #3b82f6;
+            --retainer-dim: rgba(59, 130, 246, 0.1);
+            --retainer-border: rgba(59, 130, 246, 0.3);
+            
+            --ppl: #f59e0b;
+            --ppl-dim: rgba(245, 158, 11, 0.1);
+            --ppl-border: rgba(245, 158, 11, 0.3);
+            
+            --success: #22c55e;
+            --success-dim: rgba(34, 197, 94, 0.1);
+            
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.1);
+            
+            --danger: #ef4444;
+            --danger-dim: rgba(239, 68, 68, 0.1);
+            
+            --high: #22c55e;
+            --medium: #f59e0b;
+            --low: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 200px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo h1 {
+            font-family: 'Newsreader', serif;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--retainer), var(--ppl));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            padding: 0 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 11px;
+            margin-bottom: 4px;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+        }
+
+        .nav-icon {
+            font-size: 14px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--warning-dim);
+            color: var(--warning);
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 200px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-family: 'Newsreader', serif;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--success-dim);
+            color: var(--success);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .timestamp {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .philosophy-banner strong {
+            color: var(--retainer);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            padding: 24px;
+        }
+
+        /* North Star Section */
+        .north-star {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .north-star-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .north-star-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .north-star-metric {
+            font-family: 'Newsreader', serif;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .north-star-description {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .business-type-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .type-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .type-badge.retainer {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+            border: 1px solid var(--retainer-border);
+        }
+
+        .type-badge.ppl {
+            background: var(--ppl-dim);
+            color: var(--ppl);
+            border: 1px solid var(--ppl-border);
+        }
+
+        .type-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .type-dot.retainer { background: var(--retainer); }
+        .type-dot.ppl { background: var(--ppl); }
+
+        /* Input Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .metric-card.retainer::before { background: var(--retainer); }
+        .metric-card.ppl::before { background: var(--ppl); }
+        .metric-card.combined::before { background: linear-gradient(90deg, var(--retainer), var(--ppl)); }
+
+        .metric-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .metric-type {
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .metric-type.retainer {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+        }
+
+        .metric-type.ppl {
+            background: var(--ppl-dim);
+            color: var(--ppl);
+        }
+
+        .metric-value {
+            font-family: 'Newsreader', serif;
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .metric-subtext {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+
+        .metric-trend.up { color: var(--success); }
+        .metric-trend.down { color: var(--danger); }
+
+        /* Dashboard Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .card-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-family: 'Newsreader', serif;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .card-description {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-stat {
+            text-align: center;
+        }
+
+        .card-stat-value {
+            font-size: 18px;
+            font-family: 'Newsreader', serif;
+            font-weight: 500;
+        }
+
+        .card-stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Signals Section */
+        .signals-section {
+            margin-top: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .signal-count {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--warning-dim);
+            color: var(--warning);
+        }
+
+        .signals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .signal-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--warning);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .signal-item.danger {
+            border-left-color: var(--danger);
+        }
+
+        .signal-item.success {
+            border-left-color: var(--success);
+        }
+
+        .signal-title {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .signal-description {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .signal-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .footer strong {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>
+                <div class="logo-icon">C</div>
+                COD Dashboard
+            </h1>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item active">
+                <span class="nav-icon">◉</span>
+                Overview
+            </a>
+            <a href="ontology.html" class="nav-item">
+                <span class="nav-icon">◇</span>
+                Ontology
+            </a>
+            <a href="allocations.html" class="nav-item">
+                <span class="nav-icon">⊞</span>
+                Allocations
+                <span class="nav-badge">12</span>
+            </a>
+            <a href="clients.html" class="nav-item">
+                <span class="nav-icon">◈</span>
+                Clients
+            </a>
+            <a href="campaigns.html" class="nav-item">
+                <span class="nav-icon">▶</span>
+                Campaigns
+            </a>
+            <a href="leads.html" class="nav-item">
+                <span class="nav-icon">⟁</span>
+                Leads
+            </a>
+            <a href="signals.html" class="nav-item">
+                <span class="nav-icon">⚡</span>
+                Signals
+                <span class="nav-badge">3</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            Built on Bratrax Principles<br>
+            <span style="color: var(--text-secondary);">Test. Stress. Hedge. Learn. Repeat.</span>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div>
+                <h2>Strategic Command Center</h2>
+                <p class="header-subtitle">Cases on Demand — Legal Lead Generation Agency</p>
+            </div>
+            <div class="header-right">
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>Live</span>
+                </div>
+                <div class="timestamp">Updated: Dec 12, 2025 09:45 AM</div>
+            </div>
+        </header>
+
+        <div class="philosophy-banner">
+            <strong>"Every allocation is a bet. Every lead is a hypothesis. Every campaign is a test."</strong>
+        </div>
+
+        <div class="content-grid">
+            <!-- North Star -->
+            <div class="north-star">
+                <div class="north-star-header">
+                    <div>
+                        <div class="north-star-title">North Star Metric</div>
+                        <div class="north-star-metric">Profitable Lead Machine</div>
+                        <div class="north-star-description">
+                            Retainer: Budget → Leads → Happy Client → Renewal | PPL: Spend → Leads → Sale → Profit
+                        </div>
+                    </div>
+                    <div class="business-type-toggle">
+                        <div class="type-badge retainer">
+                            <div class="type-dot retainer"></div>
+                            <span>Retainer</span>
+                        </div>
+                        <div class="type-badge ppl">
+                            <div class="type-dot ppl"></div>
+                            <span>PPL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card retainer">
+                        <div class="metric-label">
+                            Active Budget
+                            <span class="metric-type retainer">RET</span>
+                        </div>
+                        <div class="metric-value">$847K</div>
+                        <div class="metric-subtext">
+                            <span class="metric-trend up">↑ $125K</span> from last month
+                        </div>
+                    </div>
+                    <div class="metric-card retainer">
+                        <div class="metric-label">
+                            Budget Utilization
+                            <span class="metric-type retainer">RET</span>
+                        </div>
+                        <div class="metric-value">68%</div>
+                        <div class="metric-subtext">$576K spent of $847K</div>
+                    </div>
+                    <div class="metric-card retainer">
+                        <div class="metric-label">
+                            Avg CPL (Retainer)
+                            <span class="metric-type retainer">RET</span>
+                        </div>
+                        <div class="metric-value">$142</div>
+                        <div class="metric-subtext">
+                            <span class="metric-trend down">↑ $8</span> from target $134
+                        </div>
+                    </div>
+                    <div class="metric-card retainer">
+                        <div class="metric-label">
+                            Leads Delivered
+                            <span class="metric-type retainer">RET</span>
+                        </div>
+                        <div class="metric-value">4,056</div>
+                        <div class="metric-subtext">This month</div>
+                    </div>
+                    <div class="metric-card ppl">
+                        <div class="metric-label">
+                            PPL Spend (MTD)
+                            <span class="metric-type ppl">PPL</span>
+                        </div>
+                        <div class="metric-value">$234K</div>
+                        <div class="metric-subtext">Agency funded</div>
+                    </div>
+                    <div class="metric-card ppl">
+                        <div class="metric-label">
+                            PPL Revenue (MTD)
+                            <span class="metric-type ppl">PPL</span>
+                        </div>
+                        <div class="metric-value">$312K</div>
+                        <div class="metric-subtext">
+                            <span class="metric-trend up">↑ 33%</span> margin
+                        </div>
+                    </div>
+                    <div class="metric-card ppl">
+                        <div class="metric-label">
+                            Avg Sale Price
+                            <span class="metric-type ppl">PPL</span>
+                        </div>
+                        <div class="metric-value">$156</div>
+                        <div class="metric-subtext">Per lead sold</div>
+                    </div>
+                    <div class="metric-card ppl">
+                        <div class="metric-label">
+                            Leads Sold
+                            <span class="metric-type ppl">PPL</span>
+                        </div>
+                        <div class="metric-value">2,000</div>
+                        <div class="metric-subtext">This month</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="cards-grid">
+                <a href="ontology.html" class="dashboard-card">
+                    <div class="card-icon">◇</div>
+                    <div class="card-title">Ontology Map</div>
+                    <div class="card-description">
+                        Entity definitions, data lineage, source systems. The semantic foundation of Retainer vs PPL operations.
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">6</div>
+                            <div class="card-stat-label">Entities</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">4</div>
+                            <div class="card-stat-label">Sources</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="allocations.html" class="dashboard-card">
+                    <div class="card-icon">⊞</div>
+                    <div class="card-title">Allocation Tracker</div>
+                    <div class="card-description">
+                        Budget containers by Client × Channel × Geo. Real-time spend vs limit. The control unit.
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">47</div>
+                            <div class="card-stat-label">Active</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">3</div>
+                            <div class="card-stat-label">Critical</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="clients.html" class="dashboard-card">
+                    <div class="card-icon">◈</div>
+                    <div class="card-title">Client Overview</div>
+                    <div class="card-description">
+                        Law firms and buyers. Retainer status, PPL purchase history, payment cycles, satisfaction signals.
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">23</div>
+                            <div class="card-stat-label">Retainer</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">8</div>
+                            <div class="card-stat-label">PPL Buyers</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="campaigns.html" class="dashboard-card">
+                    <div class="card-icon">▶</div>
+                    <div class="card-title">Campaign Monitor</div>
+                    <div class="card-description">
+                        Platform campaigns by type. Retainer linked to allocations, PPL tracked for profitability.
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">89</div>
+                            <div class="card-stat-label">Active</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">5</div>
+                            <div class="card-stat-label">Unlinked</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="leads.html" class="dashboard-card">
+                    <div class="card-icon">⟁</div>
+                    <div class="card-title">Lead Flow</div>
+                    <div class="card-description">
+                        Lead generation and delivery. Retainer from ad networks, PPL from Leadbyte. Volume and quality.
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">6,056</div>
+                            <div class="card-stat-label">MTD Leads</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">$146</div>
+                            <div class="card-stat-label">Blended CPL</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="signals.html" class="dashboard-card">
+                    <div class="card-icon">⚡</div>
+                    <div class="card-title">Signal Detection</div>
+                    <div class="card-description">
+                        Budget alerts, profitability warnings, campaign anomalies. What needs attention now?
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">3</div>
+                            <div class="card-stat-label">Active</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">1</div>
+                            <div class="card-stat-label">Critical</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Active Signals -->
+            <div class="signals-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        ⚡ Active Signals
+                        <span class="signal-count">3</span>
+                    </div>
+                </div>
+                <div class="signals-list">
+                    <div class="signal-item danger">
+                        <div class="signal-title">KARNS-189-META-TX approaching budget exhaustion</div>
+                        <div class="signal-description">
+                            92% of allocation spent ($64,400 of $70,000). At current pace, will exhaust in 3 days. 
+                            Client payment cycle suggests new payment expected in 7 days.
+                        </div>
+                        <div class="signal-meta">
+                            <span>Client: Karns & Karns</span>
+                            <span>Type: Retainer</span>
+                            <span>Detected: 2h ago</span>
+                        </div>
+                    </div>
+                    <div class="signal-item">
+                        <div class="signal-title">PPL-META-FL CPA exceeds sale price</div>
+                        <div class="signal-description">
+                            Current CPA: $168. Sale price: $150. Running at -$18 loss per lead for past 48 hours.
+                            Historical CPA was $125. Creative fatigue suspected.
+                        </div>
+                        <div class="signal-meta">
+                            <span>Channel: Meta</span>
+                            <span>Type: PPL</span>
+                            <span>Detected: 6h ago</span>
+                        </div>
+                    </div>
+                    <div class="signal-item success">
+                        <div class="signal-title">STEIN-2-GOOG-AZ outperforming target</div>
+                        <div class="signal-description">
+                            CPL 23% below target ($108 vs $140 target). Lead volume up 45% week-over-week.
+                            Consider requesting budget increase from client.
+                        </div>
+                        <div class="signal-meta">
+                            <span>Client: Steinger Law</span>
+                            <span>Type: Retainer</span>
+                            <span>Detected: 1d ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <strong>Bratrax Principles:</strong> Every metric is a hypothesis. Dashboards show organized ignorance, not clarity. 
+            When data conflicts with reality, reality wins.
+        </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Lead Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo"><h1><div class="logo-icon">C</div>COD Dashboard</h1></div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><span class="nav-icon">◉</span>Overview</a>
+            <a href="ontology.html" class="nav-item"><span class="nav-icon">◇</span>Ontology</a>
+            <a href="allocations.html" class="nav-item"><span class="nav-icon">⊞</span>Allocations</a>
+            <a href="clients.html" class="nav-item"><span class="nav-icon">◈</span>Clients</a>
+            <a href="campaigns.html" class="nav-item"><span class="nav-icon">▶</span>Campaigns</a>
+            <a href="leads.html" class="nav-item active"><span class="nav-icon">⟁</span>Leads</a>
+            <a href="signals.html" class="nav-item"><span class="nav-icon">⚡</span>Signals</a>
+        </nav>
+        <div class="sidebar-footer">Built on Bratrax Principles</div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div>
+                <h1>Lead Flow</h1>
+                <p class="header-subtitle">Lead generation and delivery — Retainer from ad networks, PPL from Leadbyte</p>
+            </div>
+        </header>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Total Leads (MTD)</div>
+                <div class="summary-value">6,056</div>
+                <div class="summary-subtext">All sources</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Retainer Delivered</div>
+                <div class="summary-value" style="color: var(--retainer);">4,056</div>
+                <div class="summary-subtext">From ad networks</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">PPL Sold</div>
+                <div class="summary-value" style="color: var(--ppl);">2,000</div>
+                <div class="summary-subtext">Via Leadbyte</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Blended CPL</div>
+                <div class="summary-value">$146</div>
+                <div class="summary-subtext">Avg cost per lead</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h3 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 16px;">Lead Activity — Last 7 Days</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Source</th>
+                        <th>Client/Buyer</th>
+                        <th>State</th>
+                        <th>Case Type</th>
+                        <th>CPL / Sale Price</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dec 12</td>
+                        <td><span class="badge retainer">RET</span></td>
+                        <td>Meta</td>
+                        <td>Karns & Karns</td>
+                        <td>TX</td>
+                        <td>MVA</td>
+                        <td class="value">$156</td>
+                        <td><span class="badge high">Delivered</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 12</td>
+                        <td><span class="badge ppl">PPL</span></td>
+                        <td>Leadbyte</td>
+                        <td>Texas Injury Network</td>
+                        <td>TX</td>
+                        <td>MVA</td>
+                        <td class="value good">$150</td>
+                        <td><span class="badge high">Sold</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 12</td>
+                        <td><span class="badge retainer">RET</span></td>
+                        <td>Google</td>
+                        <td>Steinger, Greene & Feiner</td>
+                        <td>AZ</td>
+                        <td>MVA</td>
+                        <td class="value good">$95</td>
+                        <td><span class="badge high">Delivered</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 11</td>
+                        <td><span class="badge ppl">PPL</span></td>
+                        <td>Leadbyte</td>
+                        <td>Bush & Bush Law</td>
+                        <td>FL</td>
+                        <td>MVA</td>
+                        <td class="value good">$145</td>
+                        <td><span class="badge high">Sold</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 11</td>
+                        <td><span class="badge retainer">RET</span></td>
+                        <td>Meta</td>
+                        <td>CEO Lawyer</td>
+                        <td>CA</td>
+                        <td>MVA</td>
+                        <td class="value bad">$168</td>
+                        <td><span class="badge high">Delivered</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 11</td>
+                        <td><span class="badge retainer">RET</span></td>
+                        <td>Meta</td>
+                        <td>Wilk Law Firm</td>
+                        <td>PA</td>
+                        <td>MVA</td>
+                        <td class="value good">$122</td>
+                        <td><span class="badge high">Delivered</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 10</td>
+                        <td><span class="badge ppl">PPL</span></td>
+                        <td>Leadbyte</td>
+                        <td>Texas Injury Network</td>
+                        <td>TX</td>
+                        <td>Personal Injury</td>
+                        <td class="value good">$155</td>
+                        <td><span class="badge medium">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 10</td>
+                        <td><span class="badge retainer">RET</span></td>
+                        <td>Meta</td>
+                        <td>Karns & Karns</td>
+                        <td>CA</td>
+                        <td>MVA</td>
+                        <td class="value good">$128</td>
+                        <td><span class="badge high">Delivered</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer class="footer">
+            <strong>Key Difference:</strong> Retainer leads sourced from Ad Network reporting. PPL leads sourced from Leadbyte with sale_price tracking.
+        </footer>
+    </main>
+</body>
+</html>

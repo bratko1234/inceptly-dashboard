@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Ontology Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --bg-card: #141416;
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --retainer: #3b82f6;
+            --retainer-dim: rgba(59, 130, 246, 0.1);
+            --retainer-border: rgba(59, 130, 246, 0.3);
+            
+            --ppl: #f59e0b;
+            --ppl-dim: rgba(245, 158, 11, 0.1);
+            --ppl-border: rgba(245, 158, 11, 0.3);
+            
+            --shared: #a855f7;
+            --shared-dim: rgba(168, 85, 247, 0.1);
+            --shared-border: rgba(168, 85, 247, 0.3);
+            
+            --high: #22c55e;
+            --medium: #f59e0b;
+            --low: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 200px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo h1 {
+            font-family: 'Newsreader', serif;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--retainer), var(--ppl));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            padding: 0 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 11px;
+            margin-bottom: 4px;
+            transition: all 0.15s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+        }
+
+        .nav-icon {
+            font-size: 14px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 200px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header h1 {
+            font-family: 'Newsreader', serif;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .layer-legend {
+            display: flex;
+            gap: 12px;
+        }
+
+        .layer-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .layer-badge.retainer {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+            border: 1px solid var(--retainer-border);
+        }
+
+        .layer-badge.ppl {
+            background: var(--ppl-dim);
+            color: var(--ppl);
+            border: 1px solid var(--ppl-border);
+        }
+
+        .layer-badge.shared {
+            background: var(--shared-dim);
+            color: var(--shared);
+            border: 1px solid var(--shared-border);
+        }
+
+        .layer-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .layer-dot.retainer { background: var(--retainer); }
+        .layer-dot.ppl { background: var(--ppl); }
+        .layer-dot.shared { background: var(--shared); }
+
+        /* Philosophy Banner */
+        .philosophy-banner {
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .philosophy-banner strong {
+            color: var(--retainer);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .panel {
+            background: var(--bg-primary);
+            padding: 20px;
+        }
+
+        .panel.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-layer {
+            font-size: 8px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .panel-layer.retainer {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+        }
+
+        .panel-layer.ppl {
+            background: var(--ppl-dim);
+            color: var(--ppl);
+        }
+
+        .panel-layer.shared {
+            background: var(--shared-dim);
+            color: var(--shared);
+        }
+
+        /* Section Divider */
+        .section-divider {
+            grid-column: 1 / -1;
+            background: var(--bg-tertiary);
+            padding: 10px 24px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Flow Diagram */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .flow-section {
+            width: 100%;
+        }
+
+        .flow-section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .flow-box.retainer {
+            background: var(--retainer-dim);
+            border: 1px solid var(--retainer-border);
+        }
+
+        .flow-box.ppl {
+            background: var(--ppl-dim);
+            border: 1px solid var(--ppl-border);
+        }
+
+        .flow-box.shared {
+            background: var(--shared-dim);
+            border: 1px solid var(--shared-border);
+        }
+
+        .flow-box-label {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+        }
+
+        .flow-box.retainer .flow-box-label { color: var(--retainer); }
+        .flow-box.ppl .flow-box-label { color: var(--ppl); }
+        .flow-box.shared .flow-box-label { color: var(--shared); }
+
+        .flow-box-title {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .flow-arrow {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .flow-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .flow-line {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        /* Entity Cards */
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .entity-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .entity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .entity-card.retainer::before { background: var(--retainer); }
+        .entity-card.ppl::before { background: var(--ppl); }
+        .entity-card.shared::before { background: var(--shared); }
+
+        .entity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .entity-name {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Newsreader', serif;
+        }
+
+        .entity-type {
+            font-size: 8px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .entity-type.retainer {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+        }
+
+        .entity-type.ppl {
+            background: var(--ppl-dim);
+            color: var(--ppl);
+        }
+
+        .entity-type.shared {
+            background: var(--shared-dim);
+            color: var(--shared);
+        }
+
+        .entity-definition {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.5;
+        }
+
+        .entity-properties {
+            margin-bottom: 12px;
+        }
+
+        .property-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .property-list {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .property-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .property-item:last-child {
+            border-bottom: none;
+        }
+
+        .property-name {
+            color: var(--text-primary);
+        }
+
+        .property-type {
+            color: var(--text-muted);
+            font-size: 9px;
+        }
+
+        .entity-source {
+            font-size: 9px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .source-badge {
+            padding: 2px 6px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        /* Relationship Table */
+        .relationship-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .relationship-table th,
+        .relationship-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .relationship-table th {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 400;
+            background: var(--bg-card);
+        }
+
+        .relationship-table td {
+            font-size: 11px;
+            background: var(--bg-card);
+        }
+
+        .relationship-arrow {
+            color: var(--text-muted);
+            font-family: 'Newsreader', serif;
+        }
+
+        .applies-badge {
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .applies-badge.retainer {
+            background: var(--retainer-dim);
+            color: var(--retainer);
+        }
+
+        .applies-badge.ppl {
+            background: var(--ppl-dim);
+            color: var(--ppl);
+        }
+
+        .applies-badge.both {
+            background: var(--shared-dim);
+            color: var(--shared);
+        }
+
+        /* Source Systems */
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .source-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .source-name {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .source-entities {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .footer strong {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>
+                <div class="logo-icon">C</div>
+                COD Dashboard
+            </h1>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">◉</span>
+                Overview
+            </a>
+            <a href="ontology.html" class="nav-item active">
+                <span class="nav-icon">◇</span>
+                Ontology
+            </a>
+            <a href="allocations.html" class="nav-item">
+                <span class="nav-icon">⊞</span>
+                Allocations
+            </a>
+            <a href="clients.html" class="nav-item">
+                <span class="nav-icon">◈</span>
+                Clients
+            </a>
+            <a href="campaigns.html" class="nav-item">
+                <span class="nav-icon">▶</span>
+                Campaigns
+            </a>
+            <a href="leads.html" class="nav-item">
+                <span class="nav-icon">⟁</span>
+                Leads
+            </a>
+            <a href="signals.html" class="nav-item">
+                <span class="nav-icon">⚡</span>
+                Signals
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            Built on Bratrax Principles
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="header-top">
+                <div>
+                    <h1>Ontology Map</h1>
+                    <p class="header-subtitle">
+                        The semantic foundation. What do our words mean? How does data flow between Retainer and PPL operations?
+                        Every metric downstream inherits these definitions.
+                    </p>
+                </div>
+                <div class="layer-legend">
+                    <div class="layer-badge retainer">
+                        <div class="layer-dot retainer"></div>
+                        <span>Retainer Only</span>
+                    </div>
+                    <div class="layer-badge ppl">
+                        <div class="layer-dot ppl"></div>
+                        <span>PPL Only</span>
+                    </div>
+                    <div class="layer-badge shared">
+                        <div class="layer-dot shared"></div>
+                        <span>Both</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="philosophy-banner">
+            <strong>"Every join is a bet. Every definition is a hypothesis. Every pipeline is a chain of beliefs."</strong>
+        </div>
+
+        <div class="main-grid">
+            <!-- Data Flow Diagram -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <div class="panel-title">Business Model Data Flows</div>
+                </div>
+                <div class="flow-container">
+                    <!-- Retainer Flow -->
+                    <div class="flow-section">
+                        <div class="flow-section-title">Retainer Flow: Client pays upfront → Agency delivers leads</div>
+                        <div class="flow-row">
+                            <div class="flow-box shared">
+                                <div class="flow-box-label">Entity</div>
+                                <div class="flow-box-title">CLIENT</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box retainer">
+                                <div class="flow-box-label">Retainer</div>
+                                <div class="flow-box-title">PAYMENT</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box retainer">
+                                <div class="flow-box-label">Retainer</div>
+                                <div class="flow-box-title">ALLOCATION</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box retainer">
+                                <div class="flow-box-label">Retainer</div>
+                                <div class="flow-box-title">CAMPAIGN</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box retainer">
+                                <div class="flow-box-label">Ad Network</div>
+                                <div class="flow-box-title">LEAD</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-connector">
+                        <div class="flow-line"></div>
+                        <span>vs</span>
+                        <div class="flow-line"></div>
+                    </div>
+
+                    <!-- PPL Flow -->
+                    <div class="flow-section">
+                        <div class="flow-section-title">PPL Flow: Agency spends → Sells leads → Buyer pays later</div>
+                        <div class="flow-row">
+                            <div class="flow-box ppl">
+                                <div class="flow-box-label">Agency</div>
+                                <div class="flow-box-title">SPEND</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box ppl">
+                                <div class="flow-box-label">PPL</div>
+                                <div class="flow-box-title">CAMPAIGN</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box ppl">
+                                <div class="flow-box-label">Leadbyte</div>
+                                <div class="flow-box-title">LEAD</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box shared">
+                                <div class="flow-box-label">Entity</div>
+                                <div class="flow-box-title">CLIENT</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-box ppl">
+                                <div class="flow-box-label">Bulk</div>
+                                <div class="flow-box-title">PAYMENT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider">Core Entity Definitions</div>
+
+            <!-- Entity Registry -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        Entity Registry
+                        <span class="panel-layer shared">6 Entities</span>
+                    </div>
+                </div>
+
+                <div class="entity-grid">
+                    <!-- CLIENT -->
+                    <div class="entity-card shared">
+                        <div class="entity-header">
+                            <span class="entity-name">CLIENT</span>
+                            <span class="entity-type shared">Both</span>
+                        </div>
+                        <div class="entity-definition">
+                            A law firm or entity with a business relationship. Can be Retainer (pays upfront, receives leads) 
+                            or PPL Buyer (purchases leads), or both simultaneously.
+                        </div>
+                        <div class="entity-properties">
+                            <div class="property-label">Key Properties</div>
+                            <div class="property-list">
+                                <div class="property-item">
+                                    <span class="property-name">client_id</span>
+                                    <span class="property-type">string</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">bid</span>
+                                    <span class="property-type">integer (Leadbyte)</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">relationship_types</span>
+                                    <span class="property-type">["retainer", "ppl_buyer"]</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">status</span>
+                                    <span class="property-type">active | inactive | paused</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entity-source">
+                            Sources: <span class="source-badge">Leadbyte</span> <span class="source-badge">Slack App</span>
+                        </div>
+                    </div>
+
+                    <!-- PAYMENT -->
+                    <div class="entity-card shared">
+                        <div class="entity-header">
+                            <span class="entity-name">PAYMENT</span>
+                            <span class="entity-type shared">Both</span>
+                        </div>
+                        <div class="entity-definition">
+                            Money received from a client. <strong>Retainer:</strong> Upfront, creates allocations, has fee deduction.
+                            <strong>PPL:</strong> Bulk payout after leads delivered, covers a period.
+                        </div>
+                        <div class="entity-properties">
+                            <div class="property-label">Key Properties</div>
+                            <div class="property-list">
+                                <div class="property-item">
+                                    <span class="property-name">payment_type</span>
+                                    <span class="property-type">retainer | ppl</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">gross_amount</span>
+                                    <span class="property-type">decimal</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">fee_percent (RET)</span>
+                                    <span class="property-type">decimal</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">period_start/end (PPL)</span>
+                                    <span class="property-type">date</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entity-source">
+                            Sources: <span class="source-badge">Stripe</span> <span class="source-badge">Slack App</span>
+                        </div>
+                    </div>
+
+                    <!-- ALLOCATION -->
+                    <div class="entity-card retainer">
+                        <div class="entity-header">
+                            <span class="entity-name">ALLOCATION</span>
+                            <span class="entity-type retainer">Retainer Only</span>
+                        </div>
+                        <div class="entity-definition">
+                            Persistent budget container: Client × Channel × Geo. Funded by payments over time. 
+                            This is the CONTROL UNIT for media buying. PPL has no allocations.
+                        </div>
+                        <div class="entity-properties">
+                            <div class="property-label">Key Properties</div>
+                            <div class="property-list">
+                                <div class="property-item">
+                                    <span class="property-name">allocation_id</span>
+                                    <span class="property-type">KARNS-189-META-TX</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">channel</span>
+                                    <span class="property-type">Meta | Google</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">attributes</span>
+                                    <span class="property-type">{geos, case_types...}</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">total_budget</span>
+                                    <span class="property-type">calculated</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entity-source">
+                            Sources: <span class="source-badge">Slack App</span>
+                        </div>
+                    </div>
+
+                    <!-- PAYMENT_ALLOCATION -->
+                    <div class="entity-card retainer">
+                        <div class="entity-header">
+                            <span class="entity-name">PAYMENT_ALLOCATION</span>
+                            <span class="entity-type retainer">Retainer Only</span>
+                        </div>
+                        <div class="entity-definition">
+                            Links Payment to Allocation(s). One payment funds multiple allocations. 
+                            One allocation receives funds from multiple payments over time.
+                        </div>
+                        <div class="entity-properties">
+                            <div class="property-label">Key Properties</div>
+                            <div class="property-list">
+                                <div class="property-item">
+                                    <span class="property-name">payment_id</span>
+                                    <span class="property-type">FK to Payment</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">allocation_id</span>
+                                    <span class="property-type">FK to Allocation</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">amount</span>
+                                    <span class="property-type">decimal</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entity-source">
+                            Sources: <span class="source-badge">Slack App</span>
+                        </div>
+                    </div>
+
+                    <!-- PLATFORM_CAMPAIGN -->
+                    <div class="entity-card shared">
+                        <div class="entity-header">
+                            <span class="entity-name">PLATFORM_CAMPAIGN</span>
+                            <span class="entity-type shared">Both</span>
+                        </div>
+                        <div class="entity-definition">
+                            Actual campaign in Facebook/Google. <strong>Retainer:</strong> Links to allocation, has lifetime budget.
+                            <strong>PPL:</strong> No allocation, uncapped spend, tracked for profitability.
+                        </div>
+                        <div class="entity-properties">
+                            <div class="property-label">Key Properties</div>
+                            <div class="property-list">
+                                <div class="property-item">
+                                    <span class="property-name">campaign_type</span>
+                                    <span class="property-type">retainer | ppl</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">allocation_id (RET)</span>
+                                    <span class="property-type">parsed from name</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">lifetime_budget (RET)</span>
+                                    <span class="property-type">decimal</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">platform</span>
+                                    <span class="property-type">facebook | google</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entity-source">
+                            Sources: <span class="source-badge">Facebook API</span> <span class="source-badge">Google API</span>
+                        </div>
+                    </div>
+
+                    <!-- LEAD -->
+                    <div class="entity-card shared">
+                        <div class="entity-header">
+                            <span class="entity-name">LEAD</span>
+                            <span class="entity-type shared">Both</span>
+                        </div>
+                        <div class="entity-definition">
+                            Potential legal case. <strong>Retainer:</strong> From ad network, delivered to client.
+                            <strong>PPL:</strong> From Leadbyte, sold to buyer with sale_price.
+                        </div>
+                        <div class="entity-properties">
+                            <div class="property-label">Key Properties</div>
+                            <div class="property-list">
+                                <div class="property-item">
+                                    <span class="property-name">source_type</span>
+                                    <span class="property-type">retainer | ppl</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">allocation_id (RET)</span>
+                                    <span class="property-type">FK to Allocation</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">sale_price (PPL)</span>
+                                    <span class="property-type">decimal</span>
+                                </div>
+                                <div class="property-item">
+                                    <span class="property-name">case_type</span>
+                                    <span class="property-type">mva | personal_injury...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entity-source">
+                            Sources: <span class="source-badge">Ad Network (RET)</span> <span class="source-badge">Leadbyte (PPL)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider">Entity Relationships</div>
+
+            <!-- Relationships -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <div class="panel-title">Relationship Matrix</div>
+                </div>
+                <table class="relationship-table">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th></th>
+                            <th>To</th>
+                            <th>Cardinality</th>
+                            <th>Applies To</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Client</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Payment</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge both">Both</span></td>
+                            <td>Client makes multiple payments over time</td>
+                        </tr>
+                        <tr>
+                            <td>Client</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Allocation</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge retainer">Retainer</span></td>
+                            <td>Client can have multiple allocations (channel × geo)</td>
+                        </tr>
+                        <tr>
+                            <td>Payment</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Payment_Allocation</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge retainer">Retainer</span></td>
+                            <td>Payment funds one or more allocations</td>
+                        </tr>
+                        <tr>
+                            <td>Allocation</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Payment_Allocation</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge retainer">Retainer</span></td>
+                            <td>Allocation receives funds from many payments</td>
+                        </tr>
+                        <tr>
+                            <td>Allocation</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Platform_Campaign</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge retainer">Retainer</span></td>
+                            <td>Allocation can have many campaigns (paused + new)</td>
+                        </tr>
+                        <tr>
+                            <td>Platform_Campaign</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Lead</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge retainer">Retainer</span></td>
+                            <td>Campaign generates leads (from ad network)</td>
+                        </tr>
+                        <tr>
+                            <td>Client (Buyer)</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Lead</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge ppl">PPL</span></td>
+                            <td>Buyer purchases leads from agency</td>
+                        </tr>
+                        <tr>
+                            <td>Payment</td>
+                            <td class="relationship-arrow">→</td>
+                            <td>Lead</td>
+                            <td>1 : Many</td>
+                            <td><span class="applies-badge ppl">PPL</span></td>
+                            <td>Bulk payment covers leads from period</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-divider">Source Systems</div>
+
+            <!-- Source Systems -->
+            <div class="panel full-width">
+                <div class="panel-header">
+                    <div class="panel-title">Data Source Mapping</div>
+                </div>
+                <div class="source-grid">
+                    <div class="source-card">
+                        <div class="source-name">Leadbyte</div>
+                        <div class="source-entities">
+                            Client (BID)<br>
+                            Lead (PPL)<br>
+                            Sale Price
+                        </div>
+                    </div>
+                    <div class="source-card">
+                        <div class="source-name">Slack App</div>
+                        <div class="source-entities">
+                            Payment<br>
+                            Allocation<br>
+                            Payment_Allocation
+                        </div>
+                    </div>
+                    <div class="source-card">
+                        <div class="source-name">Stripe</div>
+                        <div class="source-entities">
+                            Payment confirmation<br>
+                            Processing fees
+                        </div>
+                    </div>
+                    <div class="source-card">
+                        <div class="source-name">Ad Networks</div>
+                        <div class="source-entities">
+                            Platform_Campaign<br>
+                            Metrics<br>
+                            Lead (Retainer)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <strong>Bratrax Principles:</strong> Every metric is a hypothesis. Dashboards show organized ignorance, not clarity. 
+            When data conflicts with reality, reality wins.
+        </footer>
+    </main>
+</body>
+</html>

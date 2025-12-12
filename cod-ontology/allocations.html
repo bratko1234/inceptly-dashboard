@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases on Demand | Allocation Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-primary: #0a0a0b; --bg-secondary: #111113; --bg-tertiary: #18181b; --bg-card: #141416; --border: #27272a; --text-primary: #fafafa; --text-secondary: #a1a1aa; --text-muted: #71717a; --retainer: #3b82f6; --retainer-dim: rgba(59, 130, 246, 0.1); --ppl: #f59e0b; --ppl-dim: rgba(245, 158, 11, 0.1); --high: #22c55e; --high-dim: rgba(34, 197, 94, 0.1); --medium: #f59e0b; --medium-dim: rgba(245, 158, 11, 0.1); --low: #ef4444; --low-dim: rgba(239, 68, 68, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'JetBrains Mono', monospace; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; font-size: 11px; }
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 200px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 20px 0; }
+        .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .sidebar-logo h1 { font-family: 'Newsreader', serif; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .logo-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--retainer), var(--ppl)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .sidebar-nav { padding: 0 12px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 11px; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-item.active { background: var(--retainer-dim); color: var(--retainer); }
+        .nav-icon { font-size: 14px; width: 20px; text-align: center; }
+        .main-content { margin-left: 200px; }
+        .header { padding: 20px 24px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+        .header h1 { font-family: 'Newsreader', serif; font-size: 20px; margin-bottom: 4px; }
+        .header-subtitle { font-size: 11px; color: var(--text-muted); }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px; border-bottom: 1px solid var(--border); }
+        .summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+        .summary-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .summary-value { font-family: 'Newsreader', serif; font-size: 28px; }
+        .summary-subtext { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+        .table-container { padding: 24px; }
+        .allocation-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
+        .allocation-table th, .allocation-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        .allocation-table th { font-size: 9px; text-transform: uppercase; color: var(--text-muted); background: var(--bg-tertiary); }
+        .allocation-table td { font-size: 11px; }
+        .allocation-table tbody tr:hover { background: var(--bg-tertiary); }
+        .allocation-id { font-size: 10px; color: var(--retainer); background: var(--retainer-dim); padding: 4px 8px; border-radius: 4px; }
+        .client-name { font-weight: 500; }
+        .client-firm { font-size: 10px; color: var(--text-muted); }
+        .channel-badge { font-size: 9px; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+        .channel-badge.meta { background: var(--retainer-dim); color: var(--retainer); }
+        .channel-badge.google { background: var(--ppl-dim); color: var(--ppl); }
+        .budget-cell { text-align: right; }
+        .budget-main { font-size: 13px; font-family: 'Newsreader', serif; }
+        .budget-sub { font-size: 10px; color: var(--text-muted); }
+        .progress-bar { width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: 3px; margin-top: 6px; }
+        .progress-fill { height: 100%; border-radius: 3px; }
+        .progress-fill.healthy { background: var(--high); }
+        .progress-fill.warning { background: var(--medium); }
+        .progress-fill.critical { background: var(--low); }
+        .status-badge { font-size: 9px; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; }
+        .status-badge.active { background: var(--high-dim); color: var(--high); }
+        .status-badge.warning { background: var(--medium-dim); color: var(--medium); }
+        .status-badge.critical { background: var(--low-dim); color: var(--low); }
+        .cpl-value { font-family: 'Newsreader', serif; font-size: 13px; }
+        .cpl-target { font-size: 9px; color: var(--text-muted); }
+        .cpl-value.good { color: var(--high); }
+        .cpl-value.bad { color: var(--low); }
+        .footer { padding: 16px 24px; background: var(--bg-secondary); border-top: 1px solid var(--border); font-size: 10px; color: var(--text-muted); text-align: center; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo"><h1><div class="logo-icon">C</div>COD Dashboard</h1></div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><span class="nav-icon">◉</span>Overview</a>
+            <a href="ontology.html" class="nav-item"><span class="nav-icon">◇</span>Ontology</a>
+            <a href="allocations.html" class="nav-item active"><span class="nav-icon">⊞</span>Allocations</a>
+            <a href="clients.html" class="nav-item"><span class="nav-icon">◈</span>Clients</a>
+            <a href="campaigns.html" class="nav-item"><span class="nav-icon">▶</span>Campaigns</a>
+            <a href="leads.html" class="nav-item"><span class="nav-icon">⟁</span>Leads</a>
+            <a href="signals.html" class="nav-item"><span class="nav-icon">⚡</span>Signals</a>
+        </nav>
+    </aside>
+    <main class="main-content">
+        <header class="header">
+            <div><h1>Allocation Tracker</h1><p class="header-subtitle">Budget containers by Client × Channel × Geo — The control unit for Retainer media buying</p></div>
+        </header>
+        <div class="summary-grid">
+            <div class="summary-card"><div class="summary-label">Total Allocations</div><div class="summary-value">47</div><div class="summary-subtext">Across 23 clients</div></div>
+            <div class="summary-card"><div class="summary-label">Total Budget</div><div class="summary-value">$847K</div><div class="summary-subtext">Active allocations</div></div>
+            <div class="summary-card"><div class="summary-label">Total Spent</div><div class="summary-value">$576K</div><div class="summary-subtext">68% utilized</div></div>
+            <div class="summary-card"><div class="summary-label">Critical</div><div class="summary-value" style="color: var(--low);">3</div><div class="summary-subtext">>90% budget used</div></div>
+        </div>
+        <div class="table-container">
+            <table class="allocation-table">
+                <thead><tr><th>Allocation ID</th><th>Client</th><th>Channel</th><th>Geo</th><th>Budget</th><th>Utilization</th><th>Status</th><th>CPL</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="allocation-id">KARNS-189-META-TX</span></td><td><div class="client-name">Roland Perez</div><div class="client-firm">Karns & Karns</div></td><td><span class="channel-badge meta">Meta</span></td><td>TX</td><td class="budget-cell"><div class="budget-main">$70,000</div><div class="budget-sub">$64,400 spent</div></td><td><div>92%</div><div class="progress-bar"><div class="progress-fill critical" style="width: 92%;"></div></div></td><td><span class="status-badge critical">Critical</span></td><td><div class="cpl-value bad">$156</div><div class="cpl-target">Target: $140</div></td></tr>
+                    <tr><td><span class="allocation-id">KARNS-189-META-CA</span></td><td><div class="client-name">Roland Perez</div><div class="client-firm">Karns & Karns</div></td><td><span class="channel-badge meta">Meta</span></td><td>CA</td><td class="budget-cell"><div class="budget-main">$225,400</div><div class="budget-sub">$152,204 spent</div></td><td><div>68%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 68%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value good">$128</div><div class="cpl-target">Target: $140</div></td></tr>
+                    <tr><td><span class="allocation-id">STEIN-2-META-FL</span></td><td><div class="client-name">Michael Steinger</div><div class="client-firm">Steinger, Greene & Feiner</div></td><td><span class="channel-badge meta">Meta</span></td><td>FL</td><td class="budget-cell"><div class="budget-main">$160,000</div><div class="budget-sub">$137,000 spent</div></td><td><div>86%</div><div class="progress-bar"><div class="progress-fill warning" style="width: 86%;"></div></div></td><td><span class="status-badge warning">Warning</span></td><td><div class="cpl-value good">$118</div><div class="cpl-target">Target: $130</div></td></tr>
+                    <tr><td><span class="allocation-id">STEIN-2-META-AZ</span></td><td><div class="client-name">Michael Steinger</div><div class="client-firm">Steinger, Greene & Feiner</div></td><td><span class="channel-badge meta">Meta</span></td><td>AZ</td><td class="budget-cell"><div class="budget-main">$63,600</div><div class="budget-sub">$8,000 spent</div></td><td><div>13%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 13%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value good">$108</div><div class="cpl-target">Target: $140</div></td></tr>
+                    <tr><td><span class="allocation-id">STEIN-2-GOOG-AZ</span></td><td><div class="client-name">Michael Steinger</div><div class="client-firm">Steinger, Greene & Feiner</div></td><td><span class="channel-badge google">Google</span></td><td>AZ</td><td class="budget-cell"><div class="budget-main">$14,000</div><div class="budget-sub">$4,200 spent</div></td><td><div>30%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 30%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value good">$95</div><div class="cpl-target">Target: $120</div></td></tr>
+                    <tr><td><span class="allocation-id">ARMDA-995-META-SC</span></td><td><div class="client-name">Christopher Carsten</div><div class="client-firm">Armada Law</div></td><td><span class="channel-badge meta">Meta</span></td><td>SC</td><td class="budget-cell"><div class="budget-main">$21,000</div><div class="budget-sub">$13,567 spent</div></td><td><div>65%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 65%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value">$134</div><div class="cpl-target">Target: $135</div></td></tr>
+                    <tr><td><span class="allocation-id">OMEGA-24-META-CA</span></td><td><div class="client-name">Omega Law Group</div><div class="client-firm">Omega Law Group</div></td><td><span class="channel-badge meta">Meta</span></td><td>CA</td><td class="budget-cell"><div class="budget-main">$102,400</div><div class="budget-sub">$7,900 spent</div></td><td><div>8%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 8%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value good">$112</div><div class="cpl-target">Target: $145</div></td></tr>
+                    <tr><td><span class="allocation-id">QUINT-17-META-ALGA</span></td><td><div class="client-name">Lauren Mingee</div><div class="client-firm">Quintessa Marketing</div></td><td><span class="channel-badge meta">Meta</span></td><td>AL, GA, TX</td><td class="budget-cell"><div class="budget-main">$20,300</div><div class="budget-sub">$15,400 spent</div></td><td><div>76%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 76%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value">$138</div><div class="cpl-target">Target: $140</div></td></tr>
+                    <tr><td><span class="allocation-id">WILK-20-META-PA</span></td><td><div class="client-name">Tyler Wilk</div><div class="client-firm">Wilk Law Firm</div></td><td><span class="channel-badge meta">Meta</span></td><td>PA</td><td class="budget-cell"><div class="budget-main">$56,252</div><div class="budget-sub">$13,125 spent</div></td><td><div>23%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 23%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value good">$125</div><div class="cpl-target">Target: $150</div></td></tr>
+                    <tr><td><span class="allocation-id">AWAD-31-META-CANY</span></td><td><div class="client-name">Ali Awad</div><div class="client-firm">CEO Lawyer</div></td><td><span class="channel-badge meta">Meta</span></td><td>CA, NY, OH, SC, TN, TX</td><td class="budget-cell"><div class="budget-main">$77,100</div><div class="budget-sub">$35,000 spent</div></td><td><div>45%</div><div class="progress-bar"><div class="progress-fill healthy" style="width: 45%;"></div></div></td><td><span class="status-badge active">Active</span></td><td><div class="cpl-value bad">$162</div><div class="cpl-target">Target: $140</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <footer class="footer"><strong>Note:</strong> Simulated data based on ontology. Actual dashboard will pull from production after Slack app redesign.</footer>
+    </main>
+</body>
+</html>
